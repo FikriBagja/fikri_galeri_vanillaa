@@ -150,23 +150,7 @@ if ($_SESSION['status'] != 'login') {
             <?php } }?>
         </div>
     </div>
-    <!-- <div class="container mt-5">
-    <div class="row justify-content-center align-items-center h-screen">
-        <div class="col-md-6">
-            <div class="profile-card p-4 shadow-lg rounded bg-light">
-                <h3 class="text-center text-primary mb-3">Selamat Datang <?php echo $_SESSION['username']; ?>!</h3>
-                <h5 class="text-center text-secondary mb-4">Mau apa nih hari ini?</h5>
-                
-                <div class="text-center">
-                    <a href="album.php" class="btn btn-primary m-2">Tambah Album</a>
-                    <span class="text-secondary">atau</span>
-                    <a href="foto.php" class="btn btn-success m-2">Tambah Foto</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-
+     
 
     <footer class="footer d-flex justify-content-center border-top mt-5 py-3 fixed-bottom">
         <p>&copy; UJIKOM RPL 2025 | Fikri Bagja Ramadhan</p>
