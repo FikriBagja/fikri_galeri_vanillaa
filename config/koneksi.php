@@ -2,7 +2,7 @@
 $host = 'localhost';
 $userdb = 'root';
 $passdb = '';
-$namedb = 'galeri_foto';
+$namedb = 'galerifoto';
 
 $koneksi = mysqli_connect($host, $userdb, $passdb, $namedb);
 

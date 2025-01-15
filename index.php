@@ -1,15 +1,16 @@
+<?php
+session_start();
+include 'config/koneksi.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fikri Galeri | Home</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 </head>
-
 <body>
-
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
             <a class="navbar-brand" href="index.php">Fikri Galeri</a>
@@ -25,25 +26,26 @@
             </div>
         </div>
     </nav>
-
-    <div class="container mt-3">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card">
-                    <img src="/assets//img/382340198-1-7-1024x1024-1.jpg" class="card-img-top" title="" style="height: 12rem;">
-                    <div class="card-footer text-center">
-                        <a href="">10 suka</a>
-                        <a href="">3 komentar</a>
-                    </div>
+    <div class="container mt-5">
+    <div class="row justify-content-center align-items-center h-screen">
+        <div class="col-md-6">
+            <div class="profile-card p-4 shadow-lg rounded bg-light">
+                <h3 class="text-center text-primary mb-3">Selamat Datang Di Fikri Galeri</h3>
+                <h5 class="text-center text-secondary">ingin melihat foto foto disini</h5>
+                <h5 class="text-center text-secondary mb-4">silahkan</h5>
+                
+                <div class="text-center">
+                    <a href="login.php" class="btn btn-primary m-2">Masuk</a>
+                    <span class="text-secondary">atau</span>
+                    <a href="register.php" class="btn btn-success m-2">Daftar</a>
                 </div>
             </div>
         </div>
     </div>
-
+</div>
     <footer class="d-flex justify-content-center border-top mt-3 bg-light fixed-bottom">
         <p>&copy; UJIKOM RPL 2025 | Fikri Bagja Ramadhan</p>
     </footer>
     <script src="assets/js/bootstrap.min.js"></script>
 </body>
-
 </html>

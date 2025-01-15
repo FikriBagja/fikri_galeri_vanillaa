@@ -112,6 +112,9 @@ $photos_result = mysqli_query($koneksi, $photos_query);
             </button>
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                        <a href="home.php" class="nav-link">Home</a>
+                    </li>
                     <li class="nav-item">
                         <a href="album.php" class="nav-link">Album</a>
                     </li>
@@ -138,7 +141,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
 
         <div class="row mt-5">
             <div class="col-md-12">
-                <h4>Album <?php echo $_SESSION['username']?></h4>
+                <h4>Album <?php echo $_SESSION['username'] ?></h4>
                 <div class="album-container">
                     <?php while ($album = mysqli_fetch_assoc($albums_result)) { ?>
                         <div class="album-item">

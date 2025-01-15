@@ -28,11 +28,15 @@ if ($_SESSION['status'] != 'login') {
             </button>
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a href="home.php" class="nav-link">Home</a>
+                    </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
-                <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>            </div>
+                <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
+            </div>
         </div>
     </nav>
 
@@ -99,11 +103,11 @@ if ($_SESSION['status'] != 'login') {
                                                                 <input type="hidden" name="albumid" value="<?php echo $data['albumid'] ?>">
                                                                 <div class="mb-3">
                                                                     <label for="nama_album" class="form-label">Nama Album</label>
-                                                                    <input type="text" class="form-control" id="namaalbum" name="namaalbum" value="<?php echo $data['namaalbum']?>" required>
+                                                                    <input type="text" class="form-control" id="namaalbum" name="namaalbum" value="<?php echo $data['namaalbum'] ?>" required>
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <label for="deskripsi" class="form-label">Deskripsi</label>
-                                                                    <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3" required><?php echo $data['deskripsi']?></textarea>
+                                                                    <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3" required><?php echo $data['deskripsi'] ?></textarea>
                                                                 </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -127,7 +131,7 @@ if ($_SESSION['status'] != 'login') {
                                                         <div class="modal-body">
                                                             <form action="../config/aksi_album.php" method="post">
                                                                 <input type="hidden" name="albumid" value="<?php echo $data['albumid'] ?>">
-                                                                <h5 class="text-center">Apakah anda yakin ingin menghapus album <strong><?php echo $data['namaalbum']?></strong>?</h5>
+                                                                <h5 class="text-center">Apakah anda yakin ingin menghapus album <strong><?php echo $data['namaalbum'] ?></strong>?</h5>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="submit" name="hapus" class="btn btn-primary">Hapus Data</button>

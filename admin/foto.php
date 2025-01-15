@@ -28,6 +28,9 @@ if ($_SESSION['status'] != 'login') {
             </button>
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a href="home.php" class="nav-link">Home</a>
+                    </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
                 </ul>

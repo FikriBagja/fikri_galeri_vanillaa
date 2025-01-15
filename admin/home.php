@@ -1,7 +1,7 @@
 <?php
 session_start();
-include '../config/koneksi.php';
 $userid = $_SESSION['userid'];
+include '../config/koneksi.php';
 if ($_SESSION['status'] != 'login') {
     echo "<script>
     alert('Anda harus login terlebih dahulu!');
@@ -85,10 +85,45 @@ if ($_SESSION['status'] != 'login') {
         </div>
     </nav>
 
-    <div class="container mt-2">
+    <div class="container mt-3">
+        <?php
+        $album = mysqli_query($koneksi, "SELECT * FROM album WHERE userid='$userid'");
+        while ($row = mysqli_fetch_assoc($album)) { ?>
+            <a href="home.php?albumid=<?php echo $row['albumid'] ?>" class="btn btn-outline-primary"><?php echo $row['namaalbum'] ?></a>
+        <?php } ?>
         <div class="row">
-         <?php    
-        $query = mysqli_query($koneksi, "SELECT * FROM foto ");
+            <?php
+            if (isset($_GET['albumid'])) {
+                $albumid = $_GET['albumid'];
+                $query = mysqli_query($koneksi, "SELECT * FROM foto WHERE albumid='$albumid' AND userid='$userid'");
+                while ($data = mysqli_fetch_assoc($query)) { ?>
+                <div class="col-md-3 mt-3">
+                    <div class="card">
+                        <img style="height: 12rem;" src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
+                        <div class="card-footer text-center">
+
+                            <?php
+                            $fotoid = $data['fotoid'];
+                            $ceksuka = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid' AND userid='$userid'");
+
+                            if (mysqli_num_rows($ceksuka) == 1) { ?>
+                                <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="batalsuka"> <i class="fa fa-heart"></i> </a>
+                            <?php } else { ?>
+                                <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="suka"> <i class="fa-regular fa-heart"></i> </a>
+                            <?php }
+
+                            $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
+                            echo mysqli_num_rows($like) . ' Suka';
+                            ?>
+                            <a href=""> <i class="fa-regular fa-comment"></i> </a>Komentar
+                        </div>
+                    </div>
+                </div>
+            <?php }
+            } else{
+
+            
+            $query = mysqli_query($koneksi, "SELECT * FROM foto WHERE userid='$userid'");
             while ($data = mysqli_fetch_assoc($query)) { ?>
                 <div class="col-md-3 mt-3">
                     <div class="card">
@@ -112,10 +147,9 @@ if ($_SESSION['status'] != 'login') {
                         </div>
                     </div>
                 </div>
-                <?php }?>
+            <?php } }?>
         </div>
     </div>
-
     <!-- <div class="container mt-5">
     <div class="row justify-content-center align-items-center h-screen">
         <div class="col-md-6">
