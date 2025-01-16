@@ -1,5 +1,6 @@
 <?php
 session_start();
+$userid = $_SESSION['userid'];
 if ($_SESSION['status'] != 'login') {
     echo "<script>
     alert('Anda harus login terlebih dahulu!');
@@ -30,6 +31,8 @@ $photos_result = mysqli_query($koneksi, $photos_query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fikri Galeri | Profile</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
     <style>
         .profile-card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -112,8 +115,8 @@ $photos_result = mysqli_query($koneksi, $photos_query);
             </button>
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                        <a href="home.php" class="nav-link">Home</a>
+                    <li class="nav-item">
+                        <a href="index.php" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
                         <a href="album.php" class="nav-link">Album</a>
@@ -128,54 +131,104 @@ $photos_result = mysqli_query($koneksi, $photos_query);
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="profile-card">
-                    <h3>Selamat Datang, <?php echo $user['username']; ?>!</h3>
-                    <p><strong>Email:</strong> <?php echo $user['email']; ?></p>
-                    <p><strong>Alamat:</strong> <?php echo $user['alamat'] ?: 'Not set'; ?></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-5">
-            <div class="col-md-12">
-                <h4>Album <?php echo $_SESSION['username'] ?></h4>
-                <div class="album-container">
-                    <?php while ($album = mysqli_fetch_assoc($albums_result)) { ?>
-                        <div class="album-item">
-                            <div class="album-card">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="album-title text-start"><?php echo $album['namaalbum']; ?></h5>
-                                    <p class="album-description text-end"><?php echo $album['deskripsi'] ?: 'No description available.'; ?></p>
-                                </div>
-                                <?php
-                                $album_id = $album['albumid'];
-                                $album_photos_query = "SELECT * FROM foto WHERE albumid = $album_id";
-                                $album_photos_result = mysqli_query($koneksi, $album_photos_query);
-                                ?>
-                                <div class="row">
-                                    <?php while ($photo = mysqli_fetch_assoc($album_photos_result)) { ?>
-                                        <div class="col-md-4 mb-3">
-                                            <img src="../assets/img/<?php echo $photo['lokasifile']; ?>" class="img-fluid" alt="Photo">
-                                            <div class="photo-info">
-                                                <p class="photo-title flex text-start"><?php echo $photo['judulfoto']; ?></p>
-                                                <p class="photo-description flex text-start"><?php echo $photo['deskripsifoto'] ?: 'No description available.'; ?></p>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php } ?>
-                </div>
+    <div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+        <div class="card p-4">
+            <div class=" image d-flex flex-column justify-content-center align-items-center"> <button class="btn btn-secondary"> <img src="../assets/avatar/avatar.png" height="100" width="100" /></button> <span class="name mt-3"><strong><?php echo $user['namalengkap'] ?></strong></span> <span class="idd"><?php echo $user['email'] ?></span>
             </div>
         </div>
     </div>
 
+    <div class="container mt-3">
+        <h2 class="text-secondary">Foto <?php echo $user['username']?></h2>
+        <div class="row" style="margin-top : -20px">
+            <?php
+            $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album on foto.albumid=album.albumid WHERE foto.userid='$userid'");
+            while ($data = mysqli_fetch_assoc($query)) { ?>
+                <div class="col-md-3 mt-3">
+                    <a type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>">
+                        <div class="card">
+                            <img style="height: 12rem;" src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
+                            <div class="card-footer text-center">
+
+                                <?php
+                                $fotoid = $data['fotoid'];
+                                $ceksuka = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid' AND userid='$userid'");
+
+                                if (mysqli_num_rows($ceksuka) == 1) { ?>
+                                    <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="batalsuka"> <i class="fa fa-heart"></i> </a>
+                                <?php } else { ?>
+                                    <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="suka"> <i class="fa-regular fa-heart"></i> </a>
+                                <?php }
+
+                                $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
+                                echo mysqli_num_rows($like) . ' Suka';
+                                ?>
+                                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa-regular fa-comment"></i> </a>
+                                <?php 
+                                $jmlkomen = mysqli_query($koneksi, "SELECT * FROM komentarfoto WHERE fotoid = '$fotoid'");
+
+                                echo mysqli_num_rows($jmlkomen).' Komentar';
+                                ?>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="modal fade" id="komentar<?php echo $data['fotoid'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <img src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="m-2">
+                                                <div class="overflow-auto">
+                                                <div class="sticky-top">
+                                                        <strong><?php echo $data['judulfoto'] ?></strong>
+                                                    </div>
+                                                        <span class="badge bg-secondary"><?php echo $data['username'] ?></span>
+                                                        <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
+                                                        <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
+                                                    <hr>
+                                                    <p align="left"><?php echo $data['deskripsifoto'] ?></p>
+                                                    <hr>
+                                                    <form action="../config/proses_komentar.php" method="post">
+                                                        <div class="input-group">
+                                                            <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
+                                                            <input type="text" name="isikomentar" class="form-control" placeholder="tambah komentar" id="">
+                                                            <div class="input-group-prepend">
+                                                                <button type="submit" name="kirimkomentar" class="btn btn-outline-primary">Kirim</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    <hr>
+                                                    <?php
+                                                    $fotoid = $data['fotoid'];
+                                                    $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto inner join user on komentarfoto.userid = user.userid where komentarfoto.fotoid='$fotoid'");
+                                                    while ($row = mysqli_fetch_array($komentar)) { ?>
+                                                        <p class="align-left">
+                                                            <strong><?php echo $row['username']?></strong>
+                                                            <?php echo $row['isikomentar']?>
+                                                        </p>
+
+                                                    <?php } ?>
+
+                                                    <div class="sticky-bottom">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
     <footer class="footer d-flex justify-content-center border-top mt-5 py-3">
-        <p>&copy; UJIKOM RPL 2025 | Fikri Bagja Ramadhan</p>
+        <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>

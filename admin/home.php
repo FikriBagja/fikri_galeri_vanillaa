@@ -70,7 +70,7 @@ if ($_SESSION['status'] != 'login') {
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="home.php" class="nav-link">Home</a>
+                        <a href="index.php" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
                         <a href="album.php" class="nav-link">Album</a>
@@ -115,7 +115,7 @@ if ($_SESSION['status'] != 'login') {
                             $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
                             echo mysqli_num_rows($like) . ' Suka';
                             ?>
-                            <a href=""> <i class="fa-regular fa-comment"></i> </a>Komentar
+                            <a href=""> <i class="fa-regular fa-comment"></i> </a> Komentar
                         </div>
                     </div>
                 </div>
@@ -143,7 +143,7 @@ if ($_SESSION['status'] != 'login') {
                             $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
                             echo mysqli_num_rows($like) . ' Suka';
                             ?>
-                            <a href=""> <i class="fa-regular fa-comment"></i> </a>Komentar
+                            <a href=""> <i class="fa-regular fa-comment"></i> </a> Komentar
                         </div>
                     </div>
                 </div>
@@ -152,8 +152,8 @@ if ($_SESSION['status'] != 'login') {
     </div>
      
 
-    <footer class="footer d-flex justify-content-center border-top mt-5 py-3 fixed-bottom">
-        <p>&copy; UJIKOM RPL 2025 | Fikri Bagja Ramadhan</p>
+    <footer class="footer d-flex justify-content-center border-top mt-5 py-3 mt-5">
+        <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>

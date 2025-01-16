@@ -29,7 +29,7 @@ if ($_SESSION['status'] != 'login') {
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="home.php" class="nav-link">Home</a>
+                        <a href="index.php" class="nav-link">Home</a>
                     </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
@@ -206,7 +206,7 @@ if ($_SESSION['status'] != 'login') {
     </div>
 
     <footer class="d-flex justify-content-center border-top mt-3 bg-light fixed-bottom">
-        <p>&copy; UJIKOM RPL 2025 | Fikri Bagja Ramadhan</p>
+        <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
 
     <script src="../assets/js/bootstrap.min.js"></script>

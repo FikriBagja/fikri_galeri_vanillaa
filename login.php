@@ -26,7 +26,7 @@
         </div>
     </nav>
 
-    <div class="container py-5">
+    <div class="container py-5 mt-5">
         <div class="row justify-content-center">
             <div class="col-md-4">
                 <div class="card">
@@ -52,7 +52,7 @@
     </div>
 
     <footer class="d-flex justify-content-center border-top mt-3 bg-light fixed-bottom">
-        <p>&copy; UJIKOM RPL 2025 | Fikri Bagja Ramadhan</p>
+        <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
     <script src="assets/js/bootstrap.min.js"></script>
 </body>
