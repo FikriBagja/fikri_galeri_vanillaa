@@ -142,8 +142,8 @@ if ($_SESSION['status'] != 'login') {
                                                     <form action="../config/proses_komentar_index.php" method="post">
                                                         <div class="input-group">
                                                             <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
-                                                            <input type="text" name="isikomentar" placeholder="tambah komentar" id="">
-                                                            <div class="input-group-prepend">
+                                                            <div class="input-group">
+                                                                <input type="text" name="isikomentar" placeholder="tambah komentar" class="form-control">
                                                                 <button type="submit" name="kirimkomentar" class="btn btn-outline-primary">Kirim</button>
                                                             </div>
                                                         </div>

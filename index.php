@@ -29,7 +29,7 @@ include 'config/koneksi.php';
     <div class="container mt-5">
     <div class="row justify-content-center align-items-center h-screen mt-5" style="margin-top: 50px;">
         <div class="col-md-6">
-            <div class="profile-card p-4 shadow-lg rounded bg-light" style="margin-top: 75px;">
+            <div class="profile-card p-4 shadow-lg rounded bg-light" style="margin-top: 125px;">
                 <h3 class="text-center text-primary mb-3">Selamat Datang Di Fikri Galeri</h3>
                 <h5 class="text-center text-secondary">ingin melihat foto foto disini</h5>
                 <h5 class="text-center text-secondary mb-4">silahkan</h5>
@@ -43,7 +43,7 @@ include 'config/koneksi.php';
         </div>
     </div>
 </div>
-    <footer class="d-flex justify-content-center border-top mt-3 bg-light fixed-bottom">
+    <footer class="d-flex justify-content-center border-top mt-3 shadow-lg py-3 fixed-bottom ">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
     <script src="assets/js/bootstrap.min.js"></script>
