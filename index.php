@@ -31,8 +31,8 @@ include 'config/koneksi.php';
         <div class="col-md-6">
             <div class="profile-card p-4 shadow-lg rounded bg-light">
                 <h3 class="text-center text-primary mb-3">Selamat Datang Di Fikri Galeri</h3>
-                <h5 class="text-center text-secondary">ingin melihat foto foto disini</h5>
-                <h5 class="text-center text-secondary mb-4">silahkan</h5>
+                <h5 class="text-center text-secondary">ingin melihat foto foto disini?</h5>
+                <h5 class="text-center text-secondary mb-4">silahkan Login!</h5>
                 
                 <div class="text-center">
                     <a href="login.php" class="btn btn-primary m-2">Masuk</a>
