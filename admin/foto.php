@@ -205,7 +205,7 @@ if ($_SESSION['status'] != 'login') {
         </div>
     </div>
 
-    <footer class="d-flex justify-content-center border-top mt-3 bg-light fixed-bottom">
+    <footer class="d-flex justify-content-center border-top mt-3 bg-light mt-5">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
 

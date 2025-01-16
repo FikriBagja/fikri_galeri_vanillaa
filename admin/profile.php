@@ -140,6 +140,14 @@ $photos_result = mysqli_query($koneksi, $photos_query);
 
     <div class="container mt-3">
         <h2 class="text-secondary">Foto <?php echo $user['username']?></h2>
+        <div class="album-container d-flex me-2">
+                <h3 class="text-secondary d-flex me-2">Album :</h3>
+                <?php
+                $album = mysqli_query($koneksi, "SELECT * FROM album WHERE userid='$userid'");
+                while ($row = mysqli_fetch_assoc($album)) { ?>
+                    <a href="profile.php?albumid=<?php echo $row['albumid'] ?>" class="btn btn-outline-primary"><?php echo $row['namaalbum'] ?></a>
+                <?php } ?>
+            </div>
         <div class="row" style="margin-top : -20px">
             <?php
             $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album on foto.albumid=album.albumid WHERE foto.userid='$userid'");
