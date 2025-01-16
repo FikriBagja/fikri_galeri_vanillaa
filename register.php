@@ -10,7 +10,7 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
         <div class="container">
             <a class="navbar-brand" href="index.php">Fikri Galeri</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,7 +26,7 @@
         </div>
     </nav>
 
-    <div class="container py-5 mb-5">
+    <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-md-4">
                 <div class="card">
@@ -56,7 +56,7 @@
             </div>
         </div>
     </div>
-    <footer class="d-flex justify-content-center border-top mt-3 bg-light fixed-bottom">
+    <footer class="d-flex justify-content-center border-top bg-light">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
     <script src="assets/js/bootstrap.min.js"></script>

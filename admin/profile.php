@@ -107,7 +107,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
         <div class="container">
             <a class="navbar-brand" href="#">Fikri Galeri</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -139,6 +139,19 @@ $photos_result = mysqli_query($koneksi, $photos_query);
     </div>
 
     <div class="container mt-3">
+<<<<<<< HEAD
+    <div class="d-flex justify-content-between align-items-center w-100">
+    <h3 class="text-secondary mb-0">Semua Foto <?php echo $user['username'] ?></h3>
+    <div class="d-flex align-items-center">
+        <h4 class="me-2 text-secondary">Album :</h4>
+        <?php
+        $album = mysqli_query($koneksi, "SELECT * FROM album WHERE userid='$userid'");
+        while ($row = mysqli_fetch_assoc($album)) { ?>
+            <a href="profile.php?albumid=<?php echo $row['albumid'] ?>" class="btn btn-outline-primary ms-2"><?php echo $row['namaalbum'] ?></a>
+        <?php } ?>
+    </div>
+</div>
+=======
         <h2 class="text-secondary">Foto <?php echo $user['username']?></h2>
         <div class="album-container d-flex me-2">
                 <h3 class="text-secondary d-flex me-2">Album :</h3>
@@ -157,72 +170,87 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                         <div class="card">
                             <img style="height: 12rem;" src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
                             <div class="card-footer text-center">
+>>>>>>> 233c7b4ee694b3c26f1648a928a9bf184df53eea
 
-                                <?php
-                                $fotoid = $data['fotoid'];
-                                $ceksuka = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid' AND userid='$userid'");
 
-                                if (mysqli_num_rows($ceksuka) == 1) { ?>
-                                    <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="batalsuka"> <i class="fa fa-heart"></i> </a>
-                                <?php } else { ?>
-                                    <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="suka"> <i class="fa-regular fa-heart"></i> </a>
-                                <?php }
 
-                                $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
-                                echo mysqli_num_rows($like) . ' Suka';
-                                ?>
-                                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa-regular fa-comment"></i> </a>
-                                <?php 
-                                $jmlkomen = mysqli_query($koneksi, "SELECT * FROM komentarfoto WHERE fotoid = '$fotoid'");
+    <div class="row" style="margin-top : -20px">
+        <?php
+        if (isset($_GET['albumid'])) {
+            $albumid = $_GET['albumid'];
+            $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.albumid='$albumid' AND foto.userid='$userid'");
+        } else {
+            $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.userid='$userid'");
+        }
 
-                                echo mysqli_num_rows($jmlkomen).' Komentar';
-                                ?>
-                            </div>
+        while ($data = mysqli_fetch_assoc($query)) { ?>
+            <div class="col-md-3 mt-3">
+                <a type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>">
+                    <div class="card">
+                        <img style="height: 12rem;" src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
+                        <div class="card-footer text-center">
+
+                            <?php
+                            $fotoid = $data['fotoid'];
+                            $ceksuka = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid' AND userid='$userid'");
+
+                            if (mysqli_num_rows($ceksuka) == 1) { ?>
+                                <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="batalsuka"> <i class="fa fa-heart"></i> </a>
+                            <?php } else { ?>
+                                <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="suka"> <i class="fa-regular fa-heart"></i> </a>
+                            <?php }
+
+                            $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
+                            echo mysqli_num_rows($like) . ' Suka';
+                            ?>
+                            <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa-regular fa-comment"></i> </a>
+                            <?php
+                            $jmlkomen = mysqli_query($koneksi, "SELECT * FROM komentarfoto WHERE fotoid = '$fotoid'");
+                            echo mysqli_num_rows($jmlkomen) . ' Komentar';
+                            ?>
                         </div>
-                    </a>
-                    <div class="modal fade" id="komentar<?php echo $data['fotoid'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <img src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="m-2">
-                                                <div class="overflow-auto">
+                    </div>
+                </a>
+                <div class="modal fade" id="komentar<?php echo $data['fotoid'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <img src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="m-2">
+                                            <div class="overflow-auto">
                                                 <div class="sticky-top">
-                                                        <strong><?php echo $data['judulfoto'] ?></strong>
-                                                    </div>
-                                                        <span class="badge bg-secondary"><?php echo $data['username'] ?></span>
-                                                        <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
-                                                        <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
-                                                    <hr>
-                                                    <p align="left"><?php echo $data['deskripsifoto'] ?></p>
-                                                    <hr>
-                                                    <form action="../config/proses_komentar.php" method="post">
-                                                        <div class="input-group">
-                                                            <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
-                                                            <input type="text" name="isikomentar" class="form-control" placeholder="tambah komentar" id="">
-                                                            <div class="input-group-prepend">
-                                                                <button type="submit" name="kirimkomentar" class="btn btn-outline-primary">Kirim</button>
-                                                            </div>
+                                                    <strong><?php echo $data['judulfoto'] ?></strong>
+                                                </div>
+                                                <p>Pembuat : <strong><?php echo $data['username'] ?></strong></p>                                                <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
+                                                <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
+                                                <hr>
+                                                <p align="left"><?php echo $data['deskripsifoto'] ?></p>
+                                                <hr>
+                                                <form action="../config/proses_komentar.php" method="post">
+                                                    <div class="input-group">
+                                                        <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
+                                                        <input type="text" name="isikomentar" placeholder="tambah komentar" id="">
+                                                        <div class="input-group-prepend">
+                                                            <button type="submit" name="kirimkomentar" class="btn btn-outline-primary">Kirim</button>
                                                         </div>
-                                                    </form>
-                                                    <hr>
-                                                    <?php
-                                                    $fotoid = $data['fotoid'];
-                                                    $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto inner join user on komentarfoto.userid = user.userid where komentarfoto.fotoid='$fotoid'");
-                                                    while ($row = mysqli_fetch_array($komentar)) { ?>
-                                                        <p class="align-left">
-                                                            <strong><?php echo $row['username']?></strong>
-                                                            <?php echo $row['isikomentar']?>
-                                                        </p>
-
-                                                    <?php } ?>
-
-                                                    <div class="sticky-bottom">
                                                     </div>
+                                                </form>
+                                                <hr>
+                                                <?php
+                                                $fotoid = $data['fotoid'];
+                                                $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto inner join user on komentarfoto.userid = user.userid where komentarfoto.fotoid='$fotoid'");
+                                                while ($row = mysqli_fetch_array($komentar)) { ?>
+                                                    <p class="align-left">
+                                                        <strong><?php echo $row['username'] ?></strong>
+                                                        <?php echo $row['isikomentar'] ?>
+                                                    </p>
+                                                <?php } ?>
+
+                                                <div class="sticky-bottom">
                                                 </div>
                                             </div>
                                         </div>
@@ -232,14 +260,15 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                         </div>
                     </div>
                 </div>
-            <?php } ?>
-        </div>
+            </div>
+        <?php } ?>
     </div>
+    </div>
+
     <footer class="footer d-flex justify-content-center border-top mt-5 py-3">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
