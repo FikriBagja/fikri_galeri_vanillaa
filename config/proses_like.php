@@ -12,7 +12,7 @@ if (mysqli_num_rows($ceksuka) == 1) {
         $query = mysqli_query($koneksi, "DELETE FROM likefoto WHERE likeid='$likeid'");
 
         echo "<script>
-        location.href='../admin/home.php';
+        location.href='../admin/profile.php';
         </script>";
     }
 }else{
@@ -20,7 +20,7 @@ if (mysqli_num_rows($ceksuka) == 1) {
     $query = mysqli_query($koneksi, "INSERT INTO likefoto VALUES('','$fotoid','$userid','$tanggallike')");
     
     echo "<script>
-        location.href='../admin/home.php';
+        location.href='../admin/profile.php';
         </script>";
 }
 

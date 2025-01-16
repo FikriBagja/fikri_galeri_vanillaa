@@ -10,6 +10,6 @@ $tanggalkomentar = date('Y-m-d');
 $query = mysqli_query($koneksi, "INSERT INTO komentarfoto VALUES('', '$fotoid','$userid','$isikomentar','$tanggalkomentar')");
 
 echo "<script>
-location.href='../admin/index.php';
+location.href='../admin/profile.php';
 </script>";
 ?>

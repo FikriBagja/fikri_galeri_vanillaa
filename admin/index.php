@@ -61,7 +61,7 @@ if ($_SESSION['status'] != 'login') {
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
         <div class="container">
             <a class="navbar-brand" href="index.php">Fikri Galeri</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@ if ($_SESSION['status'] != 'login') {
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="home.php" class="nav-link">Home</a>
+                        <a href="index.php" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
                         <a href="album.php" class="nav-link">Album</a>
@@ -85,8 +85,9 @@ if ($_SESSION['status'] != 'login') {
         </div>
     </nav>
 
-    <div class="container mt-2">
-        <div class="row">
+    <div class="container mt-3">
+        <h2 class="text-secondary">Semua Foto</h2>
+        <div class="row" style="margin-top : -17px">
             <?php
             $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album on foto.albumid=album.albumid");
             while ($data = mysqli_fetch_assoc($query)) { ?>
@@ -101,9 +102,9 @@ if ($_SESSION['status'] != 'login') {
                                 $ceksuka = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid' AND userid='$userid'");
 
                                 if (mysqli_num_rows($ceksuka) == 1) { ?>
-                                    <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="batalsuka"> <i class="fa fa-heart"></i> </a>
+                                    <a href="../config/proses_like_index.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="batalsuka"> <i class="fa fa-heart"></i> </a>
                                 <?php } else { ?>
-                                    <a href="../config/proses_like.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="suka"> <i class="fa-regular fa-heart"></i> </a>
+                                    <a href="../config/proses_like_index.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="suka"> <i class="fa-regular fa-heart"></i> </a>
                                 <?php }
 
                                 $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
@@ -113,7 +114,7 @@ if ($_SESSION['status'] != 'login') {
                                 <?php 
                                 $jmlkomen = mysqli_query($koneksi, "SELECT * FROM komentarfoto WHERE fotoid = '$fotoid'");
 
-                                echo mysqli_num_rows($jmlkomen).'Komentar';
+                                echo mysqli_num_rows($jmlkomen).' Komentar';
                                 ?>
                             </div>
                         </div>
@@ -131,12 +132,22 @@ if ($_SESSION['status'] != 'login') {
                                                 <div class="overflow-auto">
                                                     <div class="sticky-top">
                                                         <strong><?php echo $data['judulfoto'] ?></strong>
-                                                        <span class="badge bg-secondary"><?php echo $data['namalengkap'] ?></span><br>
+                                                    </div>
+                                                        <p>Pembuat : <strong><?php echo $data['username'] ?></strong></p>
                                                         <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
                                                         <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
-                                                    </div>
                                                     <hr>
-                                                    <p align="left"><?php $data['deskripsifoto'] ?></p>
+                                                    <p align="left"><?php echo $data['deskripsifoto'] ?></p>
+                                                    <hr>
+                                                    <form action="../config/proses_komentar_index.php" method="post">
+                                                        <div class="input-group">
+                                                            <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
+                                                            <input type="text" name="isikomentar" placeholder="tambah komentar" id="">
+                                                            <div class="input-group-prepend">
+                                                                <button type="submit" name="kirimkomentar" class="btn btn-outline-primary">Kirim</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
                                                     <hr>
                                                     <?php
                                                     $fotoid = $data['fotoid'];
@@ -149,17 +160,7 @@ if ($_SESSION['status'] != 'login') {
 
                                                     <?php } ?>
 
-                                                    <hr>
                                                     <div class="sticky-bottom">
-                                                        <form action="../config/proses_komentar.php" method="post">
-                                                            <div class="input-group">
-                                                                <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
-                                                                <input type="text" name="isikomentar" class="form-control" placeholder="tambah komentar" id="">
-                                                                <div class="input-group-prepend">
-                                                                    <button type="submit" name="kirimkomentar" class="btn btn-outline-primary">Kirim</button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -173,27 +174,8 @@ if ($_SESSION['status'] != 'login') {
             <?php } ?>
         </div>
     </div>
-
-    <!-- <div class="container mt-5">
-    <div class="row justify-content-center align-items-center h-screen">
-        <div class="col-md-6">
-            <div class="profile-card p-4 shadow-lg rounded bg-light">
-                <h3 class="text-center text-primary mb-3">Selamat Datang <?php echo $_SESSION['username']; ?>!</h3>
-                <h5 class="text-center text-secondary mb-4">Mau apa nih hari ini?</h5>
-                
-                <div class="text-center">
-                    <a href="album.php" class="btn btn-primary m-2">Tambah Album</a>
-                    <span class="text-secondary">atau</span>
-                    <a href="foto.php" class="btn btn-success m-2">Tambah Foto</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-
-
-    <footer class="footer d-flex justify-content-center border-top mt-5 py-3 fixed-bottom">
-        <p>&copy; UJIKOM RPL 2025 | Fikri Bagja Ramadhan</p>
+    <footer class="footer d-flex justify-content-center border-top mt-5 py-3">
+        <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>

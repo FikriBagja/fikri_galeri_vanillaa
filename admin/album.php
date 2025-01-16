@@ -20,16 +20,16 @@ if ($_SESSION['status'] != 'login') {
 
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Fikri Galeri</a>
+            <a class="navbar-brand" href="#">Fikri Galeri</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="home.php" class="nav-link">Home</a>
+                        <a href="#" class="nav-link">Home</a>
                     </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
@@ -40,10 +40,11 @@ if ($_SESSION['status'] != 'login') {
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mt-3">
+    <h2 class="text-secondary">Data Album</h2>
         <div class="row">
             <div class="col-md-4">
-                <div class="card mt-2">
+                <div class="card mt-3">
                     <div class="card-header">Tambah Album</div>
                     <div class="card-body">
                         <form action="../config/aksi_album.php" method="post">
@@ -152,7 +153,7 @@ if ($_SESSION['status'] != 'login') {
     </div>
 
     <footer class="d-flex justify-content-center border-top mt-3 bg-light fixed-bottom">
-        <p>&copy; UJIKOM RPL 2025 | Fikri Bagja Ramadhan</p>
+        <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
 
     <script src="../assets/js/bootstrap.min.js"></script>
