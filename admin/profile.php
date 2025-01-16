@@ -109,14 +109,14 @@ $photos_result = mysqli_query($koneksi, $photos_query);
 
     <nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand" href="#">Fikri Galeri</a>
+            <a class="navbar-brand" href="index.php">Fikri Galeri</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse mt-2" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">Home</a>
+                        <a href="index.php" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
                         <a href="album.php" class="nav-link">Album</a>
@@ -139,7 +139,6 @@ $photos_result = mysqli_query($koneksi, $photos_query);
     </div>
 
     <div class="container mt-3">
-<<<<<<< HEAD
     <div class="d-flex justify-content-between align-items-center w-100">
     <h3 class="text-secondary mb-0">Semua Foto <?php echo $user['username'] ?></h3>
     <div class="d-flex align-items-center">
@@ -151,16 +150,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
         <?php } ?>
     </div>
 </div>
-=======
-        <h2 class="text-secondary">Foto <?php echo $user['username']?></h2>
-        <div class="album-container d-flex me-2">
-                <h3 class="text-secondary d-flex me-2">Album :</h3>
-                <?php
-                $album = mysqli_query($koneksi, "SELECT * FROM album WHERE userid='$userid'");
-                while ($row = mysqli_fetch_assoc($album)) { ?>
-                    <a href="profile.php?albumid=<?php echo $row['albumid'] ?>" class="btn btn-outline-primary"><?php echo $row['namaalbum'] ?></a>
-                <?php } ?>
-            </div>
+
         <div class="row" style="margin-top : -20px">
             <?php
             $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album on foto.albumid=album.albumid WHERE foto.userid='$userid'");
@@ -170,9 +160,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                         <div class="card">
                             <img style="height: 12rem;" src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
                             <div class="card-footer text-center">
->>>>>>> 233c7b4ee694b3c26f1648a928a9bf184df53eea
-
-
+                                <?php } ?>
 
     <div class="row" style="margin-top : -20px">
         <?php
