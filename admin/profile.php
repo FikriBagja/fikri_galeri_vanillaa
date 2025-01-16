@@ -150,18 +150,6 @@ $photos_result = mysqli_query($koneksi, $photos_query);
         <?php } ?>
     </div>
 </div>
-
-        <div class="row" style="margin-top : -20px">
-            <?php
-            $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album on foto.albumid=album.albumid WHERE foto.userid='$userid'");
-            while ($data = mysqli_fetch_assoc($query)) { ?>
-                <div class="col-md-3 mt-3">
-                    <a type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>">
-                        <div class="card">
-                            <img style="height: 12rem;" src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
-                            <div class="card-footer text-center">
-                                <?php } ?>
-
     <div class="row" style="margin-top : -20px">
         <?php
         if (isset($_GET['albumid'])) {
