@@ -102,6 +102,37 @@ $photos_result = mysqli_query($koneksi, $photos_query);
         .photo-description {
             color: #777;
         }
+
+        .comment-item {
+            padding: 1px 0;
+            margin-bottom: 1px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .comment-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .comment-text {
+            font-size: 1rem;
+            color: #333;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .comment-date {
+            font-size: 0.9rem;
+            color: #888;
+            white-space: nowrap;
+            align-self: flex-end;
+        }
     </style>
 </head>
 
@@ -113,7 +144,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse mt-2" id="navbarNav">
+            <div class="collapse navbar-collapse mt-1" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a href="index.php" class="nav-link">Home</a>
@@ -198,32 +229,51 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                                         <div class="col-md-4">
                                             <div class="m-2">
                                                 <div class="overflow-auto">
-                                                    <div class="sticky-top">
-                                                        <strong><?php echo $data['judulfoto'] ?></strong>
+                                                    <div class="sticky-top d-flex justify-content-between align-items-center">
+                                                        <p><strong><?php echo $data['username'] ?></strong></p>
+                                                        <a href="../assets/img/<?php echo $data['lokasifile'] ?>" download class="btn btn-outline-secondary btn-sm">
+                                                            <i class="fa fa-download"></i> Unduh
+                                                        </a>
                                                     </div>
-                                                    <p>Pembuat : <strong><?php echo $data['username'] ?></strong></p> <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
+                                                    <strong><?php echo $data['judulfoto'] ?></strong>
+                                                    <p align="left" class="text-secondary"><?php echo $data['deskripsifoto'] ?></p>
+                                                    <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
                                                     <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
-                                                    <hr>
-                                                    <p align="left"><?php echo $data['deskripsifoto'] ?></p>
                                                     <hr>
                                                     <form action="../config/proses_komentar.php" method="post">
                                                         <div class="input-group">
                                                             <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
                                                             <div class="input-group">
                                                                 <input type="text" name="isikomentar" placeholder="tambah komentar" class="form-control">
-                                                                <button type="submit" name="kirimkomentar" class="btn btn-outline-primary">Kirim</button>
+                                                                <button type="submit" name="kirimkomentar" class="btn btn-outline-secondary">Kirim</button>
                                                             </div>
                                                         </div>
                                                     </form>
                                                     <hr>
                                                     <?php
                                                     $fotoid = $data['fotoid'];
-                                                    $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto inner join user on komentarfoto.userid = user.userid where komentarfoto.fotoid='$fotoid'");
-                                                    while ($row = mysqli_fetch_array($komentar)) { ?>
-                                                        <p class="align-left">
-                                                            <strong><?php echo $row['username'] ?></strong>
-                                                            <?php echo $row['isikomentar'] ?>
-                                                        </p>
+                                                    $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE komentarfoto.fotoid='$fotoid'");
+                                                    $jumlah_komentar = mysqli_num_rows($komentar);
+                                                    ?>
+
+                                                    <h5 class="text-secondary mb-3">
+                                                        <strong><?php echo $jumlah_komentar; ?> Komentar</strong>
+                                                    </h5>
+
+                                                    <?php while ($row = mysqli_fetch_array($komentar)) { ?>
+                                                        <div class="comment-item">
+                                                            <p class="comment-author">
+                                                                <strong><?php echo $row['username']; ?></strong>
+                                                            </p>
+                                                            <div class="comment-content">
+                                                                <p class="comment-text">
+                                                                    <?php echo $row['isikomentar']; ?>
+                                                                </p>
+                                                                <p class="comment-date">
+                                                                    <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                     <?php } ?>
 
                                                     <div class="sticky-bottom">

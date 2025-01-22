@@ -19,7 +19,6 @@ if ($_SESSION['status'] != 'login') {
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
-        /* Custom styles for profile card */
         .profile-card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -47,49 +46,76 @@ if ($_SESSION['status'] != 'login') {
             font-size: 1rem;
         }
 
-        .nav-link {
-            font-size: 1.1rem;
-        }
-
         .footer {
             background-color: #f8f9fa;
             color: #212529;
+        }
+
+        .comment-item {
+            padding: 1px 0;
+            margin-bottom: 1px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .comment-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .comment-text {
+            font-size: 1rem;
+            color: #333;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .comment-date {
+            font-size: 0.9rem;
+            color: #888;
+            white-space: nowrap;
+            align-self: flex-end;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
         <div class="container">
             <a class="navbar-brand" href="index.php">Fikri Galeri</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse mt-2" id="navbarNav">
+            <div class="collapse navbar-collapse mt-1" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a href="index.php" class="nav-link">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a href="album.php" class="nav-link">Album</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="foto.php" class="nav-link">Foto</a>
-                    </li>
+                    <a href="album.php" class="nav-link">Album</a>
+                    <a href="foto.php" class="nav-link">Foto</a>
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
-                <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Keluar</a>
+                <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
             </div>
         </div>
     </nav>
+
 
     <div class="container mt-3">
         <h2 class="text-secondary">Semua Foto</h2>
         <div class="row" style="margin-top : -17px">
             <?php
-            $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album on foto.albumid=album.albumid");
+            $query = mysqli_query($koneksi, "SELECT * FROM foto 
+            INNER JOIN user ON foto.userid = user.userid 
+            INNER JOIN album ON foto.albumid = album.albumid 
+            ORDER BY foto.tanggalunggah DESC");
+
             while ($data = mysqli_fetch_assoc($query)) { ?>
                 <div class="col-md-3 mt-3">
                     <a type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>">
@@ -111,10 +137,10 @@ if ($_SESSION['status'] != 'login') {
                                 echo mysqli_num_rows($like) . ' Suka';
                                 ?>
                                 <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa-regular fa-comment"></i> </a>
-                                <?php 
+                                <?php
                                 $jmlkomen = mysqli_query($koneksi, "SELECT * FROM komentarfoto WHERE fotoid = '$fotoid'");
 
-                                echo mysqli_num_rows($jmlkomen).' Komentar';
+                                echo mysqli_num_rows($jmlkomen) . ' Komentar';
                                 ?>
                             </div>
                         </div>
@@ -130,34 +156,52 @@ if ($_SESSION['status'] != 'login') {
                                         <div class="col-md-4">
                                             <div class="m-2">
                                                 <div class="overflow-auto">
-                                                    <div class="sticky-top">
-                                                        <strong><?php echo $data['judulfoto'] ?></strong>
+                                                    <div class="sticky-top d-flex justify-content-between align-items-center">
+                                                        <p><strong><?php echo $data['username'] ?></strong></p>
+                                                        <a href="../assets/img/<?php echo $data['lokasifile'] ?>" download class="btn btn-outline-secondary btn-sm">
+                                                            <i class="fa fa-download"></i> Unduh
+                                                        </a>
                                                     </div>
-                                                        <p>Pembuat : <strong><?php echo $data['username'] ?></strong></p>
-                                                        <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
-                                                        <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
-                                                    <hr>
+
+                                                    <strong><?php echo $data['judulfoto'] ?></strong>
                                                     <p align="left"><?php echo $data['deskripsifoto'] ?></p>
+                                                    <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
+                                                    <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
                                                     <hr>
                                                     <form action="../config/proses_komentar_index.php" method="post">
                                                         <div class="input-group">
                                                             <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
                                                             <div class="input-group">
                                                                 <input type="text" name="isikomentar" placeholder="tambah komentar" class="form-control">
-                                                                <button type="submit" name="kirimkomentar" class="btn btn-outline-primary">Kirim</button>
+                                                                <button type="submit" name="kirimkomentar" class="btn btn-outline-secondary">Kirim</button>
                                                             </div>
                                                         </div>
                                                     </form>
                                                     <hr>
                                                     <?php
                                                     $fotoid = $data['fotoid'];
-                                                    $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto inner join user on komentarfoto.userid = user.userid where komentarfoto.fotoid='$fotoid'");
-                                                    while ($row = mysqli_fetch_array($komentar)) { ?>
-                                                        <p class="align-left">
-                                                            <strong><?php echo $row['username']?></strong>
-                                                            <?php echo $row['isikomentar']?>
-                                                        </p>
+                                                    $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE komentarfoto.fotoid='$fotoid'");
+                                                    $jumlah_komentar = mysqli_num_rows($komentar);
+                                                    ?>
 
+                                                    <h5 class="text-secondary mb-3">
+                                                        <strong><?php echo $jumlah_komentar; ?> Komentar</strong>
+                                                    </h5>
+
+                                                    <?php while ($row = mysqli_fetch_array($komentar)) { ?>
+                                                        <div class="comment-item">
+                                                            <p class="comment-author">
+                                                                <strong><?php echo $row['username']; ?></strong>
+                                                            </p>
+                                                            <div class="comment-content">
+                                                                <p class="comment-text">
+                                                                    <?php echo $row['isikomentar']; ?>
+                                                                </p>
+                                                                <p class="comment-date">
+                                                                    <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                     <?php } ?>
 
                                                     <div class="sticky-bottom">
@@ -174,6 +218,7 @@ if ($_SESSION['status'] != 'login') {
             <?php } ?>
         </div>
     </div>
+
     <footer class="footer d-flex justify-content-center border-top mt-5 py-3">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>

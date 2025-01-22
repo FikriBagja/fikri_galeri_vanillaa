@@ -1,24 +1,28 @@
 <?php
-include'koneksi.php';
+include('koneksi.php');
 
-$username = $_POST['username'];
-$password = md5($_POST['password']);
-$email = $_POST['email'];
-$namalengkap = $_POST['namalengkap'];
-$alamat = $_POST['alamat'];
+if (isset($_POST['kirim'])) {
+    $username = $_POST['username'];
+    $password = md5($_POST['password']);
+    $email = $_POST['email'];
+    $namalengkap = $_POST['namalengkap'];
+    $alamat = $_POST['alamat'];
+    $role_id = 2; 
+    $status = 'pending'; 
 
-$sql = mysqli_query($koneksi, "INSERT INTO user (username, password, email, namalengkap, alamat) 
-VALUES ('$username', '$password', '$email', '$namalengkap', '$alamat')");
+    $query = "INSERT INTO user (username, password, email, namalengkap, alamat, roleid, status) 
+              VALUES ('$username', '$password', '$email', '$namalengkap', '$alamat', '$role_id', '$status')";
 
-if ($sql) {
-    echo "<script>
-            alert('Berhasil menyimpan data, Silahkan login');
-            window.location.href = '../login.php';
-          </script>";
-} else {
-    echo "<script>
-            alert('Gagal menyimpan data: " . mysqli_error($koneksi) . "');
-            window.history.back(); // Kembali ke halaman sebelumnya
-          </script>";
+    if (mysqli_query($koneksi, $query)) {
+        echo "<script>
+                alert('Pendaftaran berhasil! Tunggu konfirmasi admin');
+                location.href = '../login.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Pendaftaran gagal! Silakan coba lagi.');
+                location.href = '../register.php';
+              </script>";
+    }
 }
 ?>
