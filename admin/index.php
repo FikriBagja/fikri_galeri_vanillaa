@@ -62,13 +62,6 @@ if ($_SESSION['status'] != 'login') {
             margin-bottom: 3px;
         }
 
-        .comment-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            width: 100%;
-        }
-
         .comment-text {
             font-size: 1rem;
             color: #333;
@@ -76,11 +69,25 @@ if ($_SESSION['status'] != 'login') {
             margin-right: 10px;
         }
 
+        .comment-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: -6px;
+        }
+
         .comment-date {
-            font-size: 0.9rem;
-            color: #888;
-            white-space: nowrap;
-            align-self: flex-end;
+            font-size: 0.8em;
+            margin-top: -10px;
+        }
+
+        .text-secondary {
+            font-size: 0.9em;
         }
     </style>
 </head>
@@ -181,12 +188,11 @@ if ($_SESSION['status'] != 'login') {
                                                     <hr>
                                                     <?php
                                                     $fotoid = $data['fotoid'];
-                                                    $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE komentarfoto.fotoid='$fotoid'");
-                                                    $jumlah_komentar = mysqli_num_rows($komentar);
+                                                    $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE komentarfoto.fotoid='$fotoid' AND reply_komen IS NULL");
                                                     ?>
 
                                                     <h5 class="text-secondary mb-3">
-                                                        <strong><?php echo $jumlah_komentar; ?> Komentar</strong>
+                                                        <strong><?php echo mysqli_num_rows($komentar); ?> Komentar</strong>
                                                     </h5>
 
                                                     <?php while ($row = mysqli_fetch_array($komentar)) { ?>
@@ -198,12 +204,48 @@ if ($_SESSION['status'] != 'login') {
                                                                 <p class="comment-text">
                                                                     <?php echo $row['isikomentar']; ?>
                                                                 </p>
-                                                                <p class="comment-date">
-                                                                    <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
-                                                                </p>
+                                                                <div class="comment-footer">
+                                                                    <p class="comment-date">
+                                                                        <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
+                                                                    </p>
+
+                                                                    <span class="text-secondary" data-bs-toggle="collapse" href="#reply<?php echo $row['komentarid']; ?>" role="button" aria-expanded="false" aria-controls="reply<?php echo $row['komentarid']; ?>">Balas</span>
+                                                                </div>
+
+                                                                <div class="collapse" id="reply<?php echo $row['komentarid']; ?>">
+                                                                    <form action="../config/proses_komentar_index.php" method="post">
+                                                                        <div class="input-group">
+                                                                            <input type="hidden" name="fotoid" value="<?php echo $fotoid; ?>">
+                                                                            <input type="hidden" name="reply_komen" value="<?php echo $row['komentarid']; ?>">
+                                                                            <input type="text" name="isikomentar" placeholder="Tulis balasan..." class="form-control">
+                                                                            <button type="submit" name="kirimkomentar" class="btn btn-outline-secondary">Kirim</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
                                                             </div>
                                                         </div>
+
+                                                        <?php
+                                                        // Menampilkan reply dari komentar ini
+                                                        $replies = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE reply_komen = '" . $row['komentarid'] . "'");
+                                                        while ($reply = mysqli_fetch_array($replies)) {
+                                                        ?>
+                                                            <div class="comment-item" style="margin-left: 30px;">
+                                                                <p class="comment-author">
+                                                                    <strong><?php echo $reply['username']; ?></strong>
+                                                                </p>
+                                                                <div class="comment-content">
+                                                                    <p class="comment-text">
+                                                                        <?php echo $reply['isikomentar']; ?>
+                                                                    </p>
+                                                                    <p class="comment-date">
+                                                                        <small><?php echo date('d M Y', strtotime($reply['tanggalkomentar'])); ?></small>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        <?php } ?>
                                                     <?php } ?>
+
 
                                                     <div class="sticky-bottom">
                                                     </div>

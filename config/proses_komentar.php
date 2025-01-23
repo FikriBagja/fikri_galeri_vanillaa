@@ -1,15 +1,25 @@
 <?php
+include '../config/koneksi.php';
 session_start();
-include 'koneksi.php';
 
-$fotoid = $_POST['fotoid'];
-$userid = $_SESSION['userid'];
-$isikomentar = $_POST['isikomentar'];
-$tanggalkomentar = date('Y-m-d');
+if (isset($_POST['kirimkomentar'])) {
+    $fotoid = $_POST['fotoid'];
+    $isikomentar = $_POST['isikomentar'];
+    $userid = $_SESSION['userid'];
 
-$query = mysqli_query($koneksi, "INSERT INTO komentarfoto VALUES('', '$fotoid','$userid','$isikomentar','$tanggalkomentar')");
+    if (isset($_POST['reply_komen'])) {
+        $reply_komen = $_POST['reply_komen'];
+        $query = "INSERT INTO komentarfoto (fotoid, userid, isikomentar, reply_komen, tanggalkomentar) 
+                  VALUES ('$fotoid', '$userid', '$isikomentar', '$reply_komen', NOW())";
+    } else {
+        $query = "INSERT INTO komentarfoto (fotoid, userid, isikomentar, tanggalkomentar) 
+                  VALUES ('$fotoid', '$userid', '$isikomentar', NOW())";
+    }
 
-echo "<script>
-location.href='../admin/profile.php';
-</script>";
+    if (mysqli_query($koneksi, $query)) {
+        header("Location: ../admin/profile.php?fotoid=$fotoid");
+    } else {
+        echo "Error: " . mysqli_error($koneksi);
+    }
+}
 ?>
