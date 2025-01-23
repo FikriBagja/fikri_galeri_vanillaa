@@ -64,7 +64,7 @@ $user = mysqli_fetch_assoc($result);
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="table-group-divider">
                                 <?php
                                 $userid = $_SESSION['userid'];
                                 $per_page = 5;

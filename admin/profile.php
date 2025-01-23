@@ -162,9 +162,50 @@ $photos_result = mysqli_query($koneksi, $photos_query);
         </div>
     </nav>
 
-    <div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
-        <div class="card p-4">
-            <div class=" image d-flex flex-column justify-content-center align-items-center"> <button class="btn btn-secondary"> <img src="../assets/avatar/avatar.png" height="100" width="100" /></button> <span class="name mt-3"><strong><?php echo $user['namalengkap'] ?></strong></span> <span class="idd"><?php echo $user['email'] ?></span>
+    <div class="container p-3 d-flex justify-content-center" style="margin-bottom: 100px; margin-top: 70px;">
+        <div class="card px-5 py-4">
+            <div class=" image d-flex flex-column justify-content-center align-items-center"> <button class="btn btn-secondary"> <img src="../assets/avatar/avatar.png" height="100" width="100" title="<?php echo $user['username'] ?>" /></button> <span class="name mt-3"><strong><?php echo $user['username'] ?></strong></span> <span class="id text-secondary"><?php echo $user['namalengkap'] ?></span>
+                <button type="button" class="btn btn-outline-secondary mt-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="../config/aksi_profile.php" method="post">
+                        <input type="hidden" name="userid" value="<?php echo $user['userid']; ?>">
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" value="<?php echo $user['username']; ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="namalengkap" class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" name="namalengkap" value="<?php echo $user['namalengkap']; ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="<?php echo $user['email']; ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="alamat" class="form-label">Alamat</label>
+                            <textarea class="form-control" name="alamat" rows="3" required><?php echo $user['alamat']; ?></textarea>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" name="editProfile" class="btn btn-primary">Edit</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

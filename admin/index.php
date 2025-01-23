@@ -8,6 +8,7 @@ if ($_SESSION['status'] != 'login') {
     location.href = '../index.php'
     </script>";
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -114,7 +115,7 @@ if ($_SESSION['status'] != 'login') {
             $query = mysqli_query($koneksi, "SELECT * FROM foto 
             INNER JOIN user ON foto.userid = user.userid 
             INNER JOIN album ON foto.albumid = album.albumid 
-            ORDER BY foto.tanggalunggah DESC");
+            ORDER BY RAND()");
 
             while ($data = mysqli_fetch_assoc($query)) { ?>
                 <div class="col-md-3 mt-3">

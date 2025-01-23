@@ -58,7 +58,7 @@ if(isset($_POST['hapus'])){
     $query = mysqli_query($koneksi, "SELECT * FROM foto WHERE fotoid='$fotoid'");
     $data = mysqli_fetch_array($query);
     if (is_file('../assets/img/'.$data['lokasifile'])) {
-        unlink('../assets/img/'.$data['loksifile']);
+        unlink('../assets/img/'.$data['lokasifile']);
     }
     $sql = mysqli_query($koneksi, "DELETE FROM foto WHERE fotoid='$fotoid'");
     echo "<script>

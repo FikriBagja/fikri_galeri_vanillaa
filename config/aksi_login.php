@@ -5,7 +5,7 @@ include 'koneksi.php';
 $username = $_POST['username'];
 $password = md5($_POST['password']);
 
-$query = mysqli_query($koneksi, "SELECT * FROM user WHERE username = '$username' AND password = '$password' AND status = 'approved'");
+$query = mysqli_query($koneksi, "SELECT * FROM user WHERE BINARY username = '$username' AND password = '$password' AND status = 'approved'");
 
 $cek = mysqli_num_rows($query);
 
