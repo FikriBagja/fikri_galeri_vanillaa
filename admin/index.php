@@ -180,7 +180,7 @@ if ($_SESSION['status'] != 'login') {
                                                         <div class="input-group">
                                                             <input type="hidden" name="fotoid" value="<?php echo $data['fotoid'] ?>">
                                                             <div class="input-group">
-                                                                <input type="text" name="isikomentar" placeholder="tambah komentar" class="form-control">
+                                                                <input type="text" name="isikomentar" placeholder="tambah komentar" class="form-control" required>
                                                                 <button type="submit" name="kirimkomentar" class="btn btn-outline-secondary">Kirim</button>
                                                             </div>
                                                         </div>
@@ -217,7 +217,7 @@ if ($_SESSION['status'] != 'login') {
                                                                         <div class="input-group">
                                                                             <input type="hidden" name="fotoid" value="<?php echo $fotoid; ?>">
                                                                             <input type="hidden" name="reply_komen" value="<?php echo $row['komentarid']; ?>">
-                                                                            <input type="text" name="isikomentar" placeholder="Tulis balasan..." class="form-control">
+                                                                            <input type="text" name="isikomentar" placeholder="Tulis balasan..." class="form-control" required>
                                                                             <button type="submit" name="kirimkomentar" class="btn btn-outline-secondary">Kirim</button>
                                                                         </div>
                                                                     </form>
