@@ -37,6 +37,8 @@ $user = mysqli_fetch_assoc($result);
                     </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
+                    <a href="notifikasi.php" class="nav-link">Notifikasi</a>
+
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
                 <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>

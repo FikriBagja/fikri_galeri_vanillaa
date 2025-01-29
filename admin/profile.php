@@ -137,9 +137,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
             margin-top: -10px;
         }
 
-        .text-secondary {
-            font-size: 0.9em;
-        }
+        
     </style>
 </head>
 
@@ -162,6 +160,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                     <li class="nav-item">
                         <a href="foto.php" class="nav-link">Foto</a>
                     </li>
+                    <a href="notifikasi.php" class="nav-link">Notifikasi</a>
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
                 <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
@@ -321,7 +320,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                                                                         <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
                                                                     </p>
 
-                                                                    <span class="text-secondary" data-bs-toggle="collapse" href="#reply<?php echo $row['komentarid']; ?>" role="button" aria-expanded="false" aria-controls="reply<?php echo $row['komentarid']; ?>">Balas</span>
+                                                                    <span class="text-secondary" style="font-size: 0.7em;" data-bs-toggle="collapse" href="#reply<?php echo $row['komentarid']; ?>" role="button" aria-expanded="false" aria-controls="reply<?php echo $row['komentarid']; ?>">Balas</span>
                                                                 </div>
 
                                                                 <div class="collapse" id="reply<?php echo $row['komentarid']; ?>">

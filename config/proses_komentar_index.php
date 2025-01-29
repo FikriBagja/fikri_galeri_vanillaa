@@ -17,6 +17,16 @@ if (isset($_POST['kirimkomentar'])) {
     }
 
     if (mysqli_query($koneksi, $query)) {
+        $result = mysqli_query($koneksi, "SELECT userid FROM foto WHERE fotoid='$fotoid'");
+        $row = mysqli_fetch_assoc($result);
+        $fotoOwnerId = $row['userid'];
+
+        if ($fotoOwnerId != $userid) {
+            $content = "mengomentari foto Anda";
+            mysqli_query($koneksi, "INSERT INTO notifications (userid, action_userid, content, created_at) 
+                                     VALUES ('$fotoOwnerId', '$userid', '$content', NOW())");
+        }
+
         header("Location: ../admin/index.php?fotoid=$fotoid");
     } else {
         echo "Error: " . mysqli_error($koneksi);

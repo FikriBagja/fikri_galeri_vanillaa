@@ -85,10 +85,6 @@ if ($_SESSION['status'] != 'login') {
             font-size: 0.8em;
             margin-top: -10px;
         }
-
-        .text-secondary {
-            font-size: 0.9em;
-        }
     </style>
 </head>
 
@@ -107,6 +103,7 @@ if ($_SESSION['status'] != 'login') {
                     </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
+                    <a href="notifikasi.php" class="nav-link">Notifikasi</a>
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
                 <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
@@ -117,6 +114,7 @@ if ($_SESSION['status'] != 'login') {
 
     <div class="container mt-3">
         <h2 class="text-secondary">Semua Foto</h2>
+
         <div class="row" style="margin-top : -17px">
             <?php
             $query = mysqli_query($koneksi, "SELECT * FROM foto 
@@ -191,7 +189,7 @@ if ($_SESSION['status'] != 'login') {
                                                     $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE komentarfoto.fotoid='$fotoid' AND reply_komen IS NULL");
                                                     ?>
 
-                                                    <h5 class="text-secondary mb-3">
+                                                    <h5 class="text-secondary mb-3" style="font-size: 0.7em">
                                                         <strong><?php echo mysqli_num_rows($komentar); ?> Komentar</strong>
                                                     </h5>
 
@@ -209,7 +207,7 @@ if ($_SESSION['status'] != 'login') {
                                                                         <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
                                                                     </p>
 
-                                                                    <span class="text-secondary" data-bs-toggle="collapse" href="#reply<?php echo $row['komentarid']; ?>" role="button" aria-expanded="false" aria-controls="reply<?php echo $row['komentarid']; ?>">Balas</span>
+                                                                    <span class="text-secondary" style="font-size: 0.7em" data-bs-toggle="collapse" href="#reply<?php echo $row['komentarid']; ?>" role="button" aria-expanded="false" aria-controls="reply<?php echo $row['komentarid']; ?>">Balas</span>
                                                                 </div>
 
                                                                 <div class="collapse" id="reply<?php echo $row['komentarid']; ?>">
