@@ -121,6 +121,16 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         <?php endif; ?>
     </div>
 
+    <div class="container mt-3 d-flex justify-content-between">
+        <?php if (mysqli_num_rows($result) > 0) : ?>
+            <form action="../config/aksi_clear_notifikasi.php" method="POST">
+                <button type="submit" class="btn btn-danger">Hapus Semua Notifikasi</button>
+            </form>
+        <?php endif; ?>
+    </div>
+
+
+
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 
 </body>
