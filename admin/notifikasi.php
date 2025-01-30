@@ -5,13 +5,13 @@ include '../config/koneksi.php';
 if ($_SESSION['status'] != 'login') {
     echo "<script>
     alert('Anda harus login terlebih dahulu!');
-    location.href = '../index.php'
+    location.href = '../index.php';
     </script>";
 }
 
 $userid = $_SESSION['userid'];
 
-$query = "SELECT notifications.content, notifications.created_at, user.username AS action_user, foto.lokasifile AS foto_path
+$query = "SELECT notifications.content, notifications.created_at, notifications.is_read, user.username AS action_user, foto.lokasifile AS foto_path
     FROM notifications
     JOIN user ON notifications.action_userid = user.userid
     LEFT JOIN foto ON foto.fotoid = notifications.fotoid
@@ -20,15 +20,9 @@ $query = "SELECT notifications.content, notifications.created_at, user.username 
 
 $result = mysqli_query($koneksi, $query);
 
-$update_query = "UPDATE notifications SET is_read = 1 WHERE userid = '$userid' AND is_read = 0";
-mysqli_query($koneksi, $update_query);
-
 $hitung_notif = "SELECT COUNT(*) AS belum_dibaca FROM notifications WHERE userid = '$userid' AND is_read = 0";
 $hasil = mysqli_query($koneksi, $hitung_notif);
 $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
-
-
-
 ?>
 <html>
 
@@ -47,6 +41,11 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             display: flex;
             align-items: center;
             background-color: #f9f9f9;
+        }
+
+        .notification-unread {
+            font-weight: bold;
+            background-color: #eaeaea;
         }
 
         .notification-content {
@@ -69,7 +68,14 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         .username {
             font-weight: bold;
         }
+        .footer {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
     </style>
+
+
 </head>
 
 <body>
@@ -101,9 +107,42 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
     <div class="container mt-3">
         <h2 class="text-secondary" style="margin-bottom: 20px;">Notifikasi</h2>
+        
+        <?php if (isset($_GET['status'])) : ?>
+            <?php if ($_GET['status'] == 'success') : ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Semua notifikasi berhasil dihapus.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php elseif ($_GET['status'] == 'error') : ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    Terjadi kesalahan saat menghapus notifikasi.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['status'])) : ?>
+            <?php if ($_GET['status'] == 'berhasil_tandai') : ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Semua notifikasi berhasil ditandai sebagai dibaca.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php elseif ($_GET['status'] == 'gagal_tandai') : ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    Terjadi kesalahan saat menandai sebagai dibaca.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
         <?php if (mysqli_num_rows($result) > 0) : ?>
             <?php while ($row = mysqli_fetch_assoc($result)) : ?>
-                <div class="notification-card">
+                <?php
+                $isUnread = ($row['is_read'] == 0);
+                $cardClass = $isUnread ? 'notification-card notification-unread' : 'notification-card';
+                ?>
+                <div class="<?php echo $cardClass; ?>">
                     <div class="notification-content">
                         <p>
                             <span class="username"><?php echo htmlspecialchars($row['action_user']); ?></span>
@@ -116,6 +155,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                     <img src="../assets/img/<?php echo $row['foto_path'] ?>" alt="Foto yang di-like atau dikomentari" class="notification-img">
                 </div>
             <?php endwhile; ?>
+
         <?php else : ?>
             <p>Tidak ada notifikasi untuk Anda.</p>
         <?php endif; ?>
@@ -123,14 +163,31 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
     <div class="container mt-3 d-flex justify-content-between">
         <?php if (mysqli_num_rows($result) > 0) : ?>
+
+            <form action="../config/aksi_tandai_baca.php" method="POST">
+                <button type="submit" class="btn btn-warning">Tandai Semua Dibaca</button>
+            </form>
+
             <form action="../config/aksi_clear_notifikasi.php" method="POST">
                 <button type="submit" class="btn btn-danger">Hapus Semua Notifikasi</button>
             </form>
+
         <?php endif; ?>
     </div>
-
-
-
+    <footer class="footer d-flex justify-content-center border-top mt-5 py-3 fixed-bottom">
+        <p>&copy;Fikri Bagja Ramadhan</p>
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                });
+            }, 5000);
+        });
+    </script>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 
 </body>
