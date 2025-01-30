@@ -107,7 +107,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
     <div class="container mt-3">
         <h2 class="text-secondary" style="margin-bottom: 20px;">Notifikasi</h2>
-        
+
         <?php if (isset($_GET['status'])) : ?>
             <?php if ($_GET['status'] == 'success') : ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -174,7 +174,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
         <?php endif; ?>
     </div>
-    <footer class="footer d-flex justify-content-center border-top mt-5 py-3 fixed-bottom">
+    <footer class="footer d-flex justify-content-center border-top mt-5 py-3">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
     <script>
