@@ -2,14 +2,15 @@
 session_start();
 include '../config/koneksi.php';
 
-if (!isset($_SESSION['userid'])) {
-    echo "Silakan login terlebih dahulu.";
-    exit;
+if ($_SESSION['status'] != 'login') {
+    echo "<script>
+    alert('Anda harus login terlebih dahulu!');
+    location.href = '../index.php'
+    </script>";
 }
 
 $userid = $_SESSION['userid'];
 
-// Ambil notifikasi dari database untuk user yang sedang login
 $query = "SELECT notifications.content, notifications.created_at, user.username AS action_user, foto.lokasifile AS foto_path
     FROM notifications
     JOIN user ON notifications.action_userid = user.userid
@@ -18,6 +19,16 @@ $query = "SELECT notifications.content, notifications.created_at, user.username 
     ORDER BY notifications.created_at DESC";
 
 $result = mysqli_query($koneksi, $query);
+
+$update_query = "UPDATE notifications SET is_read = 1 WHERE userid = '$userid' AND is_read = 0";
+mysqli_query($koneksi, $update_query);
+
+$hitung_notif = "SELECT COUNT(*) AS belum_dibaca FROM notifications WHERE userid = '$userid' AND is_read = 0";
+$hasil = mysqli_query($koneksi, $hitung_notif);
+$belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
+
+
+
 ?>
 <html>
 
@@ -75,7 +86,12 @@ $result = mysqli_query($koneksi, $query);
                     </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
-                    <a href="notifikasi.php" class="nav-link">Notifikasi</a>
+                    <a href="notifikasi.php" class="nav-link position-relative">
+                        Notifikasi <i class="fa-regular fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?php echo $belum_dibaca ?: '0'; ?>
+                        </span>
+                    </a>
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
                 <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
@@ -85,22 +101,22 @@ $result = mysqli_query($koneksi, $query);
 
     <div class="container mt-3">
         <h2 class="text-secondary" style="margin-bottom: 20px;">Notifikasi</h2>
-        <?php if (mysqli_num_rows($result) > 0): ?>
-            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <?php if (mysqli_num_rows($result) > 0) : ?>
+            <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                 <div class="notification-card">
                     <div class="notification-content">
                         <p>
                             <span class="username"><?php echo htmlspecialchars($row['action_user']); ?></span>
                             <?php echo htmlspecialchars($row['content']); ?>
                         </p>
-                        <div class="notification-time">
+                        <div class="notification-time" style="margin-top: -10px;">
                             <?php echo date('d M Y H:i', strtotime($row['created_at'])); ?>
                         </div>
                     </div>
                     <img src="../assets/img/<?php echo $row['foto_path'] ?>" alt="Foto yang di-like atau dikomentari" class="notification-img">
                 </div>
             <?php endwhile; ?>
-        <?php else: ?>
+        <?php else : ?>
             <p>Tidak ada notifikasi untuk Anda.</p>
         <?php endif; ?>
     </div>

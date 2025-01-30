@@ -21,6 +21,11 @@ $albums_result = mysqli_query($koneksi, $albums_query);
 
 $photos_query = "SELECT * FROM foto WHERE userid = $user_id";
 $photos_result = mysqli_query($koneksi, $photos_query);
+
+$hitung_notif = "SELECT COUNT(*) AS belum_dibaca FROM notifications WHERE userid = '$userid' AND is_read = 0";
+$hasil = mysqli_query($koneksi, $hitung_notif);
+$belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
+
 ?>
 
 <!DOCTYPE html>
@@ -114,7 +119,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
         }
 
         .comment-text {
-            font-size: 1rem;
+            font-size: 0.9em;
             color: #333;
             flex: 1;
             margin-right: 10px;
@@ -136,8 +141,6 @@ $photos_result = mysqli_query($koneksi, $photos_query);
             font-size: 0.8em;
             margin-top: -10px;
         }
-
-        
     </style>
 </head>
 
@@ -160,7 +163,12 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                     <li class="nav-item">
                         <a href="foto.php" class="nav-link">Foto</a>
                     </li>
-                    <a href="notifikasi.php" class="nav-link">Notifikasi</a>
+                    <a href="notifikasi.php" class="nav-link position-relative">
+                        Notifikasi <i class="fa-regular fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?php echo $belum_dibaca ?: '0'; ?>
+                        </span>
+                    </a>
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
                 <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
@@ -283,7 +291,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                                                         </a>
                                                     </div>
                                                     <strong><?php echo $data['judulfoto'] ?></strong>
-                                                    <p align="left" class="text-secondary"><?php echo $data['deskripsifoto'] ?></p>
+                                                    <p align="left" class="text-secondary" style="font-size: 0.9em;"><?php echo $data['deskripsifoto'] ?></p>
                                                     <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
                                                     <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
                                                     <hr>
@@ -312,7 +320,7 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                                                                 <strong><?php echo $row['username']; ?></strong>
                                                             </p>
                                                             <div class="comment-content">
-                                                                <p class="comment-text">
+                                                                <p class="comment-text text-secondary">
                                                                     <?php echo $row['isikomentar']; ?>
                                                                 </p>
                                                                 <div class="comment-footer">
@@ -346,10 +354,10 @@ $photos_result = mysqli_query($koneksi, $photos_query);
                                                                     <strong><?php echo $reply['username']; ?></strong>
                                                                 </p>
                                                                 <div class="comment-content">
-                                                                    <p class="comment-text">
+                                                                    <p class="comment-text text-secondary">
                                                                         <?php echo $reply['isikomentar']; ?>
                                                                     </p>
-                                                                    <p class="comment-date">
+                                                                    <p class="comment-date" style="margin-top: -16px;">
                                                                         <small><?php echo date('d M Y', strtotime($reply['tanggalkomentar'])); ?></small>
                                                                     </p>
                                                                 </div>

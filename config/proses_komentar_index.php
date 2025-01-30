@@ -22,9 +22,9 @@ if (isset($_POST['kirimkomentar'])) {
         $fotoOwnerId = $row['userid'];
 
         if ($fotoOwnerId != $userid) {
-            $content = "mengomentari foto Anda";
-            mysqli_query($koneksi, "INSERT INTO notifications (userid, action_userid, content, created_at) 
-                                     VALUES ('$fotoOwnerId', '$userid', '$content', NOW())");
+            $content = "mengomentari foto Anda : $isikomentar";
+            mysqli_query($koneksi, "INSERT INTO notifications (userid, action_userid, content, created_at, fotoid) 
+                                     VALUES ('$fotoOwnerId', '$userid', '$content', NOW(), '$fotoid')");
         }
 
         header("Location: ../admin/index.php?fotoid=$fotoid");

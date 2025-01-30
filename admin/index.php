@@ -8,6 +8,9 @@ if ($_SESSION['status'] != 'login') {
     location.href = '../index.php'
     </script>";
 }
+$hitung_notif = "SELECT COUNT(*) AS belum_dibaca FROM notifications WHERE userid = '$userid' AND is_read = 0";
+$hasil = mysqli_query($koneksi, $hitung_notif);
+$belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
 ?>
 <!DOCTYPE html>
@@ -103,15 +106,18 @@ if ($_SESSION['status'] != 'login') {
                     </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
-                    <a href="notifikasi.php" class="nav-link">Notifikasi</a>
+                    <a href="notifikasi.php" class="nav-link position-relative">
+                        Notifikasi <i class="fa-regular fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?php echo $belum_dibaca ?: '0'; ?>
+                        </span>
+                    </a>
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
                 <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
             </div>
         </div>
     </nav>
-
-
     <div class="container mt-3">
         <h2 class="text-secondary">Semua Foto</h2>
 
@@ -170,7 +176,7 @@ if ($_SESSION['status'] != 'login') {
                                                     </div>
 
                                                     <strong><?php echo $data['judulfoto'] ?></strong>
-                                                    <p align="left"><?php echo $data['deskripsifoto'] ?></p>
+                                                    <p align="left" class="text-secondary" style="font-size: 0.9em;"><?php echo $data['deskripsifoto'] ?></p>
                                                     <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
                                                     <span class="badge bg-secondary"><?php echo $data['namaalbum'] ?></span>
                                                     <hr>
@@ -199,7 +205,7 @@ if ($_SESSION['status'] != 'login') {
                                                                 <strong><?php echo $row['username']; ?></strong>
                                                             </p>
                                                             <div class="comment-content">
-                                                                <p class="comment-text">
+                                                                <p class="comment-text text-secondary" style="font-size: 0.9em;">
                                                                     <?php echo $row['isikomentar']; ?>
                                                                 </p>
                                                                 <div class="comment-footer">
@@ -224,7 +230,6 @@ if ($_SESSION['status'] != 'login') {
                                                         </div>
 
                                                         <?php
-                                                        // Menampilkan reply dari komentar ini
                                                         $replies = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE reply_komen = '" . $row['komentarid'] . "'");
                                                         while ($reply = mysqli_fetch_array($replies)) {
                                                         ?>
@@ -233,17 +238,16 @@ if ($_SESSION['status'] != 'login') {
                                                                     <strong><?php echo $reply['username']; ?></strong>
                                                                 </p>
                                                                 <div class="comment-content">
-                                                                    <p class="comment-text">
+                                                                    <p class="comment-text text-secondary" style="font-size: 0.9em;">
                                                                         <?php echo $reply['isikomentar']; ?>
                                                                     </p>
-                                                                    <p class="comment-date">
+                                                                    <p class="comment-date" style="margin-top: -17px;">
                                                                         <small><?php echo date('d M Y', strtotime($reply['tanggalkomentar'])); ?></small>
                                                                     </p>
                                                                 </div>
                                                             </div>
                                                         <?php } ?>
                                                     <?php } ?>
-
 
                                                     <div class="sticky-bottom">
                                                     </div>

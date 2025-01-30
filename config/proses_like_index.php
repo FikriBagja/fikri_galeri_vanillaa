@@ -24,8 +24,8 @@ if (mysqli_num_rows($ceksuka) == 1) {
 
         if ($fotoOwnerId != $userid) {
             $content = "menyukai foto Anda.";
-            mysqli_query($koneksi, "INSERT INTO notifications (userid, action_userid, content, created_at) 
-                                     VALUES ('$fotoOwnerId', '$userid', '$content', NOW())");
+            mysqli_query($koneksi, "INSERT INTO notifications (userid, action_userid, content, created_at, fotoid) 
+                                     VALUES ('$fotoOwnerId', '$userid', '$content', NOW(), '$fotoid')");
         }
     }
 }

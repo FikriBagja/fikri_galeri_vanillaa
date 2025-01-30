@@ -12,6 +12,10 @@ $query = "SELECT * FROM user WHERE userid = $userid";
 $result = mysqli_query($koneksi, $query);
 $user = mysqli_fetch_assoc($result);
 
+$hitung_notif = "SELECT COUNT(*) AS belum_dibaca FROM notifications WHERE userid = '$userid' AND is_read = 0";
+$hasil = mysqli_query($koneksi, $hitung_notif);
+$belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +25,8 @@ $user = mysqli_fetch_assoc($result);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fikri Galeri | Foto</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
 </head>
 
 <body>
@@ -38,8 +44,12 @@ $user = mysqli_fetch_assoc($result);
                     </li>
                     <a href="album.php" class="nav-link">Album</a>
                     <a href="foto.php" class="nav-link">Foto</a>
-                    <a href="notifikasi.php" class="nav-link">Notifikasi</a>
-
+                    <a href="notifikasi.php" class="nav-link position-relative">
+                        Notifikasi <i class="fa-regular fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?php echo $belum_dibaca ?: '0'; ?>
+                        </span>
+                    </a>
                 </ul>
                 <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
                 <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
@@ -48,7 +58,7 @@ $user = mysqli_fetch_assoc($result);
     </nav>
 
     <div class="container mt-3">
-        <h2 class="text-secondary">Foto <?php echo $user['username']?></h2>
+        <h2 class="text-secondary">Foto <?php echo $user['username'] ?></h2>
 
         <div class="row">
             <div class="col-md-12">
@@ -72,7 +82,7 @@ $user = mysqli_fetch_assoc($result);
                                 $per_page = 5;
                                 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                                 $start_from = ($page - 1) * $per_page;
-                                
+
                                 $sql = mysqli_query($koneksi, "SELECT * FROM foto WHERE userid='$userid' LIMIT $start_from, $per_page");
                                 $no = $start_from + 1;
                                 while ($data = mysqli_fetch_array($sql)) {
@@ -80,7 +90,7 @@ $user = mysqli_fetch_assoc($result);
                                     <tr>
                                         <td><?php echo $no++ ?></td>
                                         <td><img src="../assets/img/<?php echo $data['lokasifile'] ?>" width="100" alt=""></td>
-                                        <td ><?php echo $data['judulfoto'] ?></td>
+                                        <td><?php echo $data['judulfoto'] ?></td>
                                         <td style="width: 400px;"><?php echo $data['deskripsifoto'] ?></td>
                                         <td><?php echo $data['tanggalunggah'] ?></td>
                                         <td>
@@ -223,7 +233,7 @@ $user = mysqli_fetch_assoc($result);
                                 <input type="file" class="form-control" name="lokasifile" required>
                             </div>
                             <div class="d-flex justify-content-end">
-                            <button type="submit" name="submit" class="btn btn-outline-secondary">Tambah Foto</button>
+                                <button type="submit" name="submit" class="btn btn-outline-secondary">Tambah Foto</button>
                             </div>
                         </form>
                     </div>
