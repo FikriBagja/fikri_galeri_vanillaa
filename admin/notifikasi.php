@@ -124,12 +124,39 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             visibility: visible;
             opacity: 1;
         }
+     
+        .navbar-nav .nav-link:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link i:hover {
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-light .navbar-nav .nav-link {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link.active {
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+            transition: all 0.3s ease;
+        }
     </style>
-
-
 </head>
 
 <body>
+
     <nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
         <div class="container">
             <a class="navbar-brand" href="index.php">Fikri Galeri</a>
@@ -139,22 +166,28 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             <div class="collapse navbar-collapse mt-1" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="index.php" class="nav-link">Home</a>
+                        <a href="index.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>">Home</a>
                     </li>
-                    <a href="album.php" class="nav-link">Album</a>
-                    <a href="foto.php" class="nav-link">Foto</a>
-                    <a href="notifikasi.php" class="nav-link position-relative">
-                        Notifikasi <i class="fa-regular fa-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            <?php echo $belum_dibaca ?: '0'; ?>
-                        </span>
-                    </a>
+                    <li class="nav-item">
+                        <a href="album.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'album.php') ? 'active' : ''; ?>">Album</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
+                    </li>
                 </ul>
-                <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
-                <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
+                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px;">
+                    <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
+                </a>
+                <a href="notifikasi.php" class="nav-link position-relative">
+                    <i class="fa-regular fa-bell" style="font-weight: bold; font-size: 1.3em;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <?php echo $belum_dibaca ?: '0'; ?>
+                    </span>
+                </a>
             </div>
         </div>
     </nav>
+
 
     <div class="container mt-3">
         <div class="header-container">

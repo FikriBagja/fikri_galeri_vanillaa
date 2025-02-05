@@ -26,6 +26,35 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     <title>Fikri Galeri | Album</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        .navbar-nav .nav-link:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link i:hover {
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-light .navbar-nav .nav-link {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link.active {
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 
 <body>
@@ -39,24 +68,28 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             <div class="collapse navbar-collapse mt-1" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="index.php" class="nav-link">Home</a>
+                        <a href="index.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>">Home</a>
                     </li>
-                    <a href="album.php" class="nav-link">Album</a>
-                    <a href="foto.php" class="nav-link">Foto</a>
-                    <a href="notifikasi.php" class="nav-link position-relative">
-                        Notifikasi <i class="fa-regular fa-bell"></i>
-                        <?php if ($belum_dibaca > 0) : ?>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                <?php echo $belum_dibaca; ?>
-                            </span>
-                        <?php endif; ?>
-                    </a>
+                    <li class="nav-item">
+                        <a href="album.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'album.php') ? 'active' : ''; ?>">Album</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
+                    </li>
                 </ul>
-                <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
-                <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
+                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px;">
+                    <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
+                </a>
+                <a href="notifikasi.php" class="nav-link position-relative">
+                    <i class="fa-regular fa-bell" style="font-weight: bold; font-size: 1.3em;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <?php echo $belum_dibaca ?: '0'; ?>
+                    </span>
+                </a>
             </div>
         </div>
     </nav>
+
 
     <div class="container mt-3">
         <h2 class="text-secondary">Album <?php echo $user['username'] ?></h2>
@@ -65,8 +98,8 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             <div class="col-md-12">
                 <div class="card mt-3">
                     <div class="card-header">Data Album</div>
-                    <div class="card-body">
-                        <table class="table table-striped table-hover">
+                    <div class="card-body table-responsive">
+                        <table class="table table-striped table-hover align-middle">
                             <thead>
                                 <tr>
                                     <th>No</th>

@@ -141,6 +141,34 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             font-size: 0.8em;
             margin-top: -10px;
         }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link i:hover {
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-light .navbar-nav .nav-link {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link.active {
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 
@@ -155,33 +183,46 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             <div class="collapse navbar-collapse mt-1" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="index.php" class="nav-link">Home</a>
+                        <a href="index.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a href="album.php" class="nav-link">Album</a>
+                        <a href="album.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'album.php') ? 'active' : ''; ?>">Album</a>
                     </li>
                     <li class="nav-item">
-                        <a href="foto.php" class="nav-link">Foto</a>
+                        <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
                     </li>
-                    <a href="notifikasi.php" class="nav-link position-relative">
-                        Notifikasi <i class="fa-regular fa-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            <?php echo $belum_dibaca ?: '0'; ?>
-                        </span>
-                    </a>
                 </ul>
-                <a href="profile.php" class="btn btn-outline-primary m-1">Profile</a>
-                <a href="../config/aksi_logout.php" class="btn btn-outline-success m-1">Logout</a>
+                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px;">
+                    <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
+                </a>
+                <a href="notifikasi.php" class="nav-link position-relative">
+                    <i class="fa-regular fa-bell" style="font-weight: bold; font-size: 1.3em;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <?php echo $belum_dibaca ?: '0'; ?>
+                    </span>
+                </a>
             </div>
         </div>
     </nav>
 
     <div class="container p-3 d-flex justify-content-center" style="margin-bottom: 100px; margin-top: 70px;">
+
         <div class="card px-5 py-4">
-            <div class=" image d-flex flex-column justify-content-center align-items-center"> <button class="btn btn-secondary"> <img src="../assets/avatar/avatar.png" height="100" width="100" title="<?php echo $user['username'] ?>" /></button> <span class="name mt-3"><strong><?php echo $user['username'] ?></strong></span> <span class="id text-secondary"><?php echo $user['namalengkap'] ?></span>
-                <button type="button" class="btn btn-outline-secondary mt-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+            <div class="image d-flex flex-column justify-content-center align-items-center">
+                <button class="btn btn-secondary">
+                    <img src="../assets/avatar/avatar.png" height="100" width="100" title="<?php echo $user['username'] ?>" />
+                </button>
+                <span class="name mt-3"><strong><?php echo $user['username'] ?></strong></span>
+                <span class="id text-secondary"><?php echo $user['namalengkap'] ?></span>
+
+                <div class="d-flex gap-3 mt-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+                    <a href="../config/aksi_logout.php" class="btn btn-outline-success">Logout</a>
+                </div>
             </div>
         </div>
+
+
     </div>
     <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -225,17 +266,21 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     </div>
 
     <div class="container mt-3">
-        <div class="d-flex justify-content-between align-items-center w-100">
-            <h3 class="text-secondary mb-0">Semua Foto <?php echo $user['username'] ?></h3>
-            <div class="d-flex align-items-center">
-                <h4 class="me-2 text-secondary">Album :</h4>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center w-100">
+            <h3 class="text-secondary mb-0 me-3">Semua Foto <?php echo $user['username'] ?></h3>
+            <div class="d-flex flex-wrap align-items-center mt-3 mt-md-0">
+                <h4 class="me-2 text-secondary mb-0">Album:</h4>
                 <?php
                 $album = mysqli_query($koneksi, "SELECT * FROM album WHERE userid='$userid'");
                 while ($row = mysqli_fetch_assoc($album)) { ?>
-                    <a href="profile.php?albumid=<?php echo $row['albumid'] ?>" class="btn btn-outline-primary ms-2"><?php echo $row['namaalbum'] ?></a>
+                    <a href="profile.php?albumid=<?php echo $row['albumid'] ?>" class="btn btn-outline-primary ms-2 mb-2">
+                        <?php echo $row['namaalbum'] ?>
+                    </a>
                 <?php } ?>
             </div>
         </div>
+
+
         <div class="row" style="margin-top : -20px">
             <?php
             if (isset($_GET['albumid'])) {
