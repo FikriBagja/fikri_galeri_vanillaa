@@ -59,8 +59,8 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         }
 
         .notification-img {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             border-radius: 8px;
             object-fit: cover;
         }
@@ -68,11 +68,62 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         .username {
             font-weight: bold;
         }
+
         .footer {
             background-color: #f8f9fa;
             color: #212529;
         }
 
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-buttons form {
+            display: inline;
+            margin-left: 10px;
+        }
+
+        .action-buttons button {
+            border: none;
+            background-color: transparent;
+            font-size: 1.2rem;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .action-buttons button:hover {
+            color: #0056b3;
+        }
+
+        .action-form {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            width: 180px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -90px;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+
+        .action-form:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 
 
@@ -106,7 +157,27 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     </nav>
 
     <div class="container mt-3">
-        <h2 class="text-secondary" style="margin-bottom: 20px;">Notifikasi</h2>
+        <div class="header-container">
+            <h2 class="text-secondary" style="margin-bottom: 20px;">Notifikasi</h2>
+            <?php if (mysqli_num_rows($result) > 0) : ?>
+                <div class="action-buttons">
+                    <form action="../config/aksi_tandai_baca.php" method="POST" class="action-form">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <span class="tooltip-text">Tandai Semua Dibaca</span>
+                        </button>
+                    </form>
+
+                    <form action="../config/aksi_clear_notifikasi.php" method="POST" class="action-form">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-trash-alt"></i>
+                            <span class="tooltip-text">Hapus Semua Notifikasi</span>
+                        </button>
+                    </form>
+
+                </div>
+            <?php endif; ?>
+        </div>
 
         <?php if (isset($_GET['status'])) : ?>
             <?php if ($_GET['status'] == 'success') : ?>
@@ -144,7 +215,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                 ?>
                 <div class="<?php echo $cardClass; ?>">
                     <div class="notification-content">
-                        <p>
+                        <p style="width: 90%;">
                             <span class="username"><?php echo htmlspecialchars($row['action_user']); ?></span>
                             <?php echo htmlspecialchars($row['content']); ?>
                         </p>
@@ -161,22 +232,10 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         <?php endif; ?>
     </div>
 
-    <div class="container mt-3 d-flex justify-content-between">
-        <?php if (mysqli_num_rows($result) > 0) : ?>
-
-            <form action="../config/aksi_tandai_baca.php" method="POST">
-                <button type="submit" class="btn btn-warning">Tandai Semua Dibaca</button>
-            </form>
-
-            <form action="../config/aksi_clear_notifikasi.php" method="POST">
-                <button type="submit" class="btn btn-danger">Hapus Semua Notifikasi</button>
-            </form>
-
-        <?php endif; ?>
-    </div>
     <footer class="footer d-flex justify-content-center border-top mt-5 py-3">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             setTimeout(function() {

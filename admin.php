@@ -2,13 +2,11 @@
 session_start();
 include('config/koneksi.php');
 
-// Pastikan hanya admin yang bisa mengakses halaman ini
-if ($_SESSION['roleid'] != 1) { // 1 berarti admin
+if ($_SESSION['roleid'] != 1) {
     header("Location: login.php");
     exit;
 }
 
-// Mengambil daftar pengguna yang statusnya 'pending'
 $query = "SELECT * FROM user WHERE status='pending'";
 $result = mysqli_query($koneksi, $query);
 
