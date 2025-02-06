@@ -128,7 +128,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse mt-1" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav me-auto mb-10">
                     <li class="nav-item">
                         <a href="index.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>">Home</a>
                     </li>
@@ -139,12 +139,12 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                         <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
                     </li>
                 </ul>
-                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px;">
+                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px; margin-bottom: 15px; margin-top:10px;">
                     <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
                 </a>
                 <a href="notifikasi.php" class="nav-link position-relative">
                     <i class="fa-regular fa-bell" style="font-weight: bold; font-size: 1.3em;"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <span class=" top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         <?php echo $belum_dibaca ?: '0'; ?>
                     </span>
                 </a>
