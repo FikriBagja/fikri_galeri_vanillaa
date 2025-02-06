@@ -1,0 +1,10 @@
+<div class="d-flex flex-wrap align-items-center mt-3 mt-md-0">
+                <h4 class="me-2 text-secondary mb-0">Album :</h4>
+                <?php
+                $album = mysqli_query($koneksi, "SELECT * FROM album WHERE userid='$userid'");
+                while ($row = mysqli_fetch_assoc($album)) { ?>
+                    <a href="profile.php?albumid=<?php echo $row['albumid'] ?>" class="btn btn-outline-primary ms-2 mb-2">
+                        <?php echo $row['namaalbum'] ?>
+                    </a>
+                <?php } ?>
+            </div>

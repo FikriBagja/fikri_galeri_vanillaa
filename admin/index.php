@@ -152,7 +152,9 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         </div>
     </nav>
 
+    
     <div class="container mt-3">
+        
         <h2 class="text-secondary">Semua Foto</h2>
 
         <div class="row" style="margin-top : -17px">

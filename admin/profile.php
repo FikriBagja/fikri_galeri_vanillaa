@@ -26,6 +26,25 @@ $hitung_notif = "SELECT COUNT(*) AS belum_dibaca FROM notifications WHERE userid
 $hasil = mysqli_query($koneksi, $hitung_notif);
 $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
+$filter = isset($_GET['filter']) ? $_GET['filter'] : 'tanggal';
+$order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+
+if (isset($_GET['albumid'])) {
+    $albumid = $_GET['albumid'];
+    $query = "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.albumid='$albumid' AND foto.userid='$userid'";
+} else {
+    $query = "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.userid='$userid'";
+}
+
+if ($filter == 'like') {
+    $query .= " ORDER BY (SELECT COUNT(*) FROM likefoto WHERE likefoto.fotoid = foto.fotoid) $order";
+} elseif ($filter == 'komen') {
+    $query .= " ORDER BY (SELECT COUNT(*) FROM komentarfoto WHERE komentarfoto.fotoid = foto.fotoid) $order";
+} elseif ($filter == 'tanggal') {
+    $query .= " ORDER BY foto.tanggalunggah $order";
+}
+
+$photos_result = mysqli_query($koneksi, $query);
 ?>
 
 <!DOCTYPE html>
@@ -266,31 +285,54 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     </div>
 
     <div class="container mt-3">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center w-100">
-            <h3 class="text-secondary mb-0 me-3">Semua Foto <?php echo $user['username'] ?></h3>
-            <div class="d-flex flex-wrap align-items-center mt-3 mt-md-0">
-                <h4 class="me-2 text-secondary mb-0">Album:</h4>
-                <?php
-                $album = mysqli_query($koneksi, "SELECT * FROM album WHERE userid='$userid'");
-                while ($row = mysqli_fetch_assoc($album)) { ?>
-                    <a href="profile.php?albumid=<?php echo $row['albumid'] ?>" class="btn btn-outline-primary ms-2 mb-2">
-                        <?php echo $row['namaalbum'] ?>
-                    </a>
-                <?php } ?>
-            </div>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center w-100" style="margin-bottom: 15px;">
+            <h3 class="text-secondary mb-0 me-3" style="margin-top: -15px;">Semua Foto <?php echo $user['username'] ?></h3>
         </div>
 
+        <form method="GET" action="profile.php" class="mb-3">
+            <div class="row">
+                <div class="col-md-4 mb-2">
+                    <select name="filter" class="form-select">
+                        <option value="like" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'like') ? 'selected' : ''; ?>>Berdasarkan Like</option>
+                        <option value="komen" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'komen') ? 'selected' : ''; ?>>Berdasarkan Komentar</option>
+                        <option value="tanggal" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'tanggal') ? 'selected' : ''; ?>>Berdasarkan Tanggal Unggah</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <select name="order" class="form-select">
+                        <option value="ASC" <?php echo (isset($_GET['order']) && $_GET['order'] == 'ASC') ? 'selected' : ''; ?>>Ascending</option>
+                        <option value="DESC" <?php echo (isset($_GET['order']) && $_GET['order'] == 'DESC') ? 'selected' : ''; ?>>Descending</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary form-control">Filter</button>
+                </div>
+            </div>
+        </form>
 
-        <div class="row" style="margin-top : -20px">
+        <div class="row" style="margin-top : -33px">
             <?php
+            $filter = isset($_GET['filter']) ? $_GET['filter'] : 'tanggal';
+            $order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+
             if (isset($_GET['albumid'])) {
                 $albumid = $_GET['albumid'];
-                $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.albumid='$albumid' AND foto.userid='$userid'");
+                $query = "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.albumid='$albumid' AND foto.userid='$userid'";
             } else {
-                $query = mysqli_query($koneksi, "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.userid='$userid'");
+                $query = "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.userid='$userid'";
             }
 
-            while ($data = mysqli_fetch_assoc($query)) { ?>
+            if ($filter == 'like') {
+                $query .= " ORDER BY (SELECT COUNT(*) FROM likefoto WHERE likefoto.fotoid = foto.fotoid) $order";
+            } elseif ($filter == 'komen') {
+                $query .= " ORDER BY (SELECT COUNT(*) FROM komentarfoto WHERE komentarfoto.fotoid = foto.fotoid) $order";
+            } elseif ($filter == 'tanggal') {
+                $query .= " ORDER BY foto.tanggalunggah $order";
+            }
+
+            $photos_result = mysqli_query($koneksi, $query);
+
+            while ($data = mysqli_fetch_assoc($photos_result)) { ?>
                 <div class="col-md-3 mt-3">
                     <a type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>">
                         <div class="card">
