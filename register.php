@@ -87,9 +87,9 @@
             </div>
         </div>
     </div>
-    <footer class="py-3 shadow-lg mt-custom d-flex justify-content-center">
+    <!-- <footer class="py-3 shadow-lg mt-custom d-flex justify-content-center">
         <p>&copy;Fikri Bagja Ramadhan</p>
-    </footer>
+    </footer> -->
     <script src="assets/js/bootstrap.min.js"></script>
 </body>
 

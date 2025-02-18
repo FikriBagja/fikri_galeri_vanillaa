@@ -20,7 +20,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Album</title>
+    <title>Fikri Galeri | Tambah Album</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.css">
     <style>
@@ -83,24 +83,16 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             border-radius: 4px;
         }
 
-        .btn-approve {
-            background-color: #28a745;
-            width: 90px;
+        .btn-ya {
+            background-color: #000;
+            width: 150px;
             color: white;
         }
 
-        .btn-approve:hover {
-            background-color: #218838;
-        }
+        .btn-ya:hover {
+            border-color: #000;
+            color: #000;
 
-        .btn-reject {
-            background-color: #dc3545;
-            width: 90px;
-            color: white;
-        }
-
-        .btn-reject:hover {
-            background-color: #c82333;
         }
 
         .hitam {
@@ -152,7 +144,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         <div class="mb-5 row justify-content-center">
             <div class="col-md-8">
                 <div class="mt-3 border-0 shadow-sm card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header bg-dark text-white">
                         <h5 class="card-title mb-0">Tambah Album Baru</h5>
                     </div>
                     <div class="card-body">
@@ -166,7 +158,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                                 <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4" placeholder="Masukkan deskripsi album" required></textarea>
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button type="submit" name="submit" class="btn btn-primary">Tambah Album</button>
+                                <button type="submit" name="submit" class="btn btn-ya">Tambah Album</button>
                                 <button type="reset" class="btn hitam">Reset</button>
                             </div>
                         </form>
@@ -176,11 +168,11 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         </div>
     </div>
 
-    <footer class="py-3 mt-4 shadow-lg d-flex justify-content-center text-center bg-light">
+    <!-- <footer class="py-3 mt-4 shadow-lg d-flex justify-content-center text-center bg-light">
         <p class="mb-0">&copy; Fikri Bagja Ramadhan</p>
-    </footer>
+    </footer> -->
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 
-</html> 
+</html>

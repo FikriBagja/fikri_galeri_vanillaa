@@ -266,6 +266,9 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         <?php endif; ?>
     </div>
 
+    <!-- <footer class="py-3 mt-5 footer d-flex justify-content-center border-top">
+        <p>&copy;Fikri Bagja Ramadhan</p>
+    </footer> -->
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

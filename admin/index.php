@@ -376,9 +376,9 @@ $photos_result = mysqli_query($koneksi, $query);
         </div>
     </div>
 
-    <footer class="py-3 mt-5 shadow-lg d-flex justify-content-center">
+    <!-- <footer class="py-3 mt-5 shadow-lg d-flex justify-content-center">
         <p>&copy;Fikri Bagja Ramadhan</p>
-    </footer>
+    </footer> -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

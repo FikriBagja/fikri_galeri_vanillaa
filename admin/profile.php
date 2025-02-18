@@ -200,7 +200,26 @@ $photos_result = mysqli_query($koneksi, $query);
             transition: all 0.3s ease;
         }
 
+        .btn-reject {
+            background-color: red;
+            width: 75px;
+            color: #fff;
+        }
 
+        .btn-reject:hover {
+            border-color: red;
+            color: #000;
+        }
+
+        .btn-edit{
+            background-color: green;
+            width: 75px;
+            color: #fff;
+        }
+        .btn-edit:hover{
+            border-color: green;
+            color: #000;
+        }
 
         .hitam {
             border-color: #000;
@@ -258,8 +277,8 @@ $photos_result = mysqli_query($koneksi, $query);
                 <p class="card-text text-muted"><?php echo $user['namalengkap'] ?></p>
 
                 <div class="mt-4">
-                    <button type="button" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-                    <a href="../config/aksi_logout.php" class="btn btn-outline-danger w-100">Logout</a>
+                    <button type="button" class="btn btn-edit w-100 mb-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+                    <a href="../config/aksi_logout.php" class="btn btn-reject w-100">Logout</a>
                 </div>
             </div>
         </div>
@@ -504,9 +523,9 @@ $photos_result = mysqli_query($koneksi, $query);
         </div>
     </div>
 
-    <footer class="py-3 mt-5 shadow-lg d-flex justify-content-center">
+    <!-- <footer class="py-3 mt-5 shadow-lg d-flex justify-content-center">
         <p>&copy;Fikri Bagja Ramadhan</p>
-    </footer>
+    </footer> -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

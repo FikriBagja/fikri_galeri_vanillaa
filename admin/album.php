@@ -291,9 +291,9 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     </div>
 
 
-    <footer class="py-3 mt-5 shadow-lg d-flex justify-content-center text-center">
+    <!-- <footer class="py-3 mt-5 shadow-lg d-flex justify-content-center text-center">
         <p>&copy;Fikri Bagja Ramadhan</p>
-    </footer>
+    </footer> -->
 
     <script src="../assets/js/bootstrap.min.js"></script>
 </body>

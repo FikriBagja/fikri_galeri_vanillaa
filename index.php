@@ -98,9 +98,9 @@ include 'config/koneksi.php';
             </div>
         </div>
     </div>
-    <footer class="py-3 mt-3 shadow-lg d-flex justify-content-center fixed-bottom">
+    <!-- <footer class="py-3 mt-3 shadow-lg d-flex justify-content-center fixed-bottom">
         <p>&copy;Fikri Bagja Ramadhan</p>
-    </footer>
+    </footer> -->
     <script src="assets/js/bootstrap.min.js"></script>
 </body>
 
