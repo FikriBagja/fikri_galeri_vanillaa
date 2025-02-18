@@ -193,7 +193,7 @@ $photos_result = mysqli_query($koneksi, $query);
             <form method="GET" action="index.php" class="">
                 <div class="row">
                     <div class="mb-2 col-md-4">
-                        <select name="filter" class="form-select" id="filterSelect">
+                        <select name="filter" class="form-select text-center" id="filterSelect">
                             <option value="" selected disabled>Pilih Berdasarkan</option>
                             <option value="like" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'like') ? 'selected' : ''; ?>>Berdasarkan Like</option>
                             <option value="komen" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'komen') ? 'selected' : ''; ?>>Berdasarkan Komentar</option>
@@ -201,7 +201,7 @@ $photos_result = mysqli_query($koneksi, $query);
                         </select>
                     </div>
                     <div class="mb-2 col-md-4">
-                        <select name="order" class="form-select" id="orderSelect" disabled>
+                        <select name="order" class="form-select text-center" id="orderSelect" disabled>
                             <option value="" selected disabled>Pilih Urutan</option>
                         </select>
                     </div>

@@ -232,7 +232,8 @@ $photos_result = mysqli_query($koneksi, $query);
                         <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
                     </li>
                 </ul>
-                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px; margin-bottom: 15px; margin-top:10px;">
+                <a href="profile.php" class="nav-link position-relative" 
+                    style="margin-right: 30px; margin-bottom: 15px; margin-top:10px;">
                     <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
                 </a>
                 <a href="notifikasi.php" class="nav-link position-relative">
@@ -245,25 +246,23 @@ $photos_result = mysqli_query($koneksi, $query);
         </div>
     </nav>
 
-    <div class="container p-3 d-flex justify-content-center" style="margin-bottom: 100px; margin-top: 70px;">
+    <div class="container p-5 d-flex justify-content-center" style="margin-bottom: 100px; margin-top: 70px;">
+        <div class="card shadow-lg border-0 rounded-4" style="width: 350px;">
+            <div class="d-flex justify-content-center mt-4">
+                <img src="../assets/avatar/avatar.png" height="120" width="120" class="rounded-circle border border-4 border-primary" alt="Profile Picture" title="<?php echo $user['username'] ?>" />
+            </div>
+            <div class="card-body text-center">
+                <h3 class="card-title fw-bold"><?php echo $user['username'] ?></h3>
+                <p class="card-text text-muted"><?php echo $user['namalengkap'] ?></p>
 
-        <div class="px-5 py-4 card">
-            <div class="image d-flex flex-column justify-content-center align-items-center">
-                <button class="btn btn-secondary">
-                    <img src="../assets/avatar/avatar.png" height="100" width="100" title="<?php echo $user['username'] ?>" />
-                </button>
-                <span class="mt-3 name"><strong><?php echo $user['username'] ?></strong></span>
-                <span class="id text-secondary"><?php echo $user['namalengkap'] ?></span>
-
-                <div class="gap-3 mt-3 d-flex">
-                    <button type="button" class="btn hitam" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-                    <a href="../config/aksi_logout.php" class="btn btn-outline-danger">Logout</a>
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+                    <a href="../config/aksi_logout.php" class="btn btn-outline-danger w-100">Logout</a>
                 </div>
             </div>
         </div>
-
-
     </div>
+
     <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -323,12 +322,10 @@ $photos_result = mysqli_query($koneksi, $query);
                     </select>
                 </div>
                 <div class="mb-2 col-md-4">
-                    <select name="order" class="form-select text-center" id="orderSelect" disabled>
-                        <option value="" selected disabled>Pilih Urutan</option>
-                        <option value="ASC" <?php echo (isset($_GET['order']) && $_GET['order'] == 'ASC') ? 'selected' : ''; ?>>Ascending</option>
-                        <option value="DESC" <?php echo (isset($_GET['order']) && $_GET['order'] == 'DESC') ? 'selected' : ''; ?>>Descending</option>
-                    </select>
-                </div>
+                        <select name="order" class="form-select text-center" id="orderSelect" disabled>
+                            <option value="" selected disabled>Pilih Urutan</option>
+                        </select>
+                    </div>
                 <div class="col-md-4">
                     <button type="submit" class="btn hitam form-control">Filter</button>
                 </div>
