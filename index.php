@@ -72,8 +72,8 @@ include 'config/koneksi.php';
         </div>
     </nav>
     <div class="container mt-5">
-        <div class="h-screen mt-5 row justify-content-center align-items-center">
-            <div class="col-md-6">
+        <div class=" mt-5 row justify-content-center align-items-center" >
+            <div class="col-md-6" style="margin-top: 45px;">
                 <div class="p-4 mt-4 rounded shadow-lg mt-sm-negative mt-md-4 profile-card bg-light">
                     <h3 class="mb-3 text-center text-bold">Selamat Datang di Fikri Galeri!</h3>
                     <h5 class="text-center text-secondary">Temukan koleksi foto menarik dan inspiratif hanya di sini. Jelajahi, bagikan, dan nikmati setiap momen.</h5>

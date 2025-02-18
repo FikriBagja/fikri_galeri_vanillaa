@@ -184,34 +184,37 @@ $photos_result = mysqli_query($koneksi, $query);
     </nav>
 
 
-    <div class="container mt-3">
+    <div class="container mt-3" style=" margin-bottom:20px;">
 
         <h2 class="text-secondary">
             <a href="?filter=random" class="link-offset-2 link-underline link-underline-opacity-0 text-secondary">Semua Foto</a>
         </h2>
 
         <div class="row" style="margin-top : 20px">
-            <form method="GET" action="index.php" class="">
-                <div class="row">
-                    <div class="mb-2 col-md-4">
-                        <select name="filter" class="form-select text-center" id="filterSelect">
-                            <option value="" selected disabled>Pilih Berdasarkan</option>
-                            <option value="like" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'like') ? 'selected' : ''; ?>>Berdasarkan Like</option>
-                            <option value="komen" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'komen') ? 'selected' : ''; ?>>Berdasarkan Komentar</option>
-                            <option value="tanggal" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'tanggal') ? 'selected' : ''; ?>>Berdasarkan Tanggal Unggah</option>
-                        </select>
+            <div class="col-md-6">
+                <form method="GET" action="index.php">
+                    <div class="row">
+                        <div class="mb-2 col-md-4">
+                            <select name="filter" class="form-select text-center" id="filterSelect">
+                                <option value="" selected disabled>Pilih Berdasarkan</option>
+                                <option value="like" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'like') ? 'selected' : ''; ?>>Berdasarkan Like</option>
+                                <option value="komen" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'komen') ? 'selected' : ''; ?>>Berdasarkan Komentar</option>
+                                <option value="tanggal" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'tanggal') ? 'selected' : ''; ?>>Berdasarkan Tanggal Unggah</option>
+                            </select>
+                        </div>
+                        <div class="mb-2 col-md-4">
+                            <select name="order" class="form-select text-center" id="orderSelect" disabled>
+                                <option value="" selected disabled>Pilih Urutan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn hitam form-control">Filter</button>
+                        </div>
                     </div>
-                    <div class="mb-2 col-md-4">
-                        <select name="order" class="form-select text-center" id="orderSelect" disabled>
-                            <option value="" selected disabled>Pilih Urutan</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <button type="submit" class="btn hitam form-control">Filter</button>
-                    </div>
-                </div>
-            </form>
-
+                </form>
+            </div>
+        </div>
+        <div class="row">
 
             <?php
 

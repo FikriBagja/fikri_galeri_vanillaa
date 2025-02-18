@@ -163,7 +163,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         </div>
     </nav>
 
-    <div class="container mt-3">
+    <div class="container mt-3" style=" margin-bottom:20px;">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="text-secondary">Album <?php echo $user['username'] ?></h2>
             <h3><a href="tambah_album.php" class="btn hitam" style="width: 150px;">Tambah Album</a></h3>

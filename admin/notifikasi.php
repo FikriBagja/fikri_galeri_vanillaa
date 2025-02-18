@@ -120,6 +120,12 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             font-size: 12px;
         }
 
+        @media (max-width: 576px) {
+            .tooltip-text{
+                margin-left: -180px !important;
+            }
+        }
+
         .action-form:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
@@ -141,7 +147,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         }
 
         .navbar-nav .nav-link.active {
-            background-color: #007bff;
+            background-color: #000;
             color: white;
             border-radius: 5px;
             font-weight: bold;
@@ -149,7 +155,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
         .navbar-nav .nav-link:hover {
             background-color: #f1f1f1;
-            color: #007bff;
+            color: #000;
             transition: all 0.3s ease;
         }
     </style>
@@ -190,20 +196,20 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     </nav>
 
 
-    <div class="container mt-3">
+    <div class="container mt-3" style=" margin-bottom:20px;">
         <div class="header-container">
             <h2 class="text-secondary" style="margin-bottom: 20px;">Notifikasi</h2>
             <?php if (mysqli_num_rows($result) > 0) : ?>
                 <div class="action-buttons">
                     <form action="../config/aksi_tandai_baca.php" method="POST" class="action-form">
-                        <button type="submit" class="btn btn-warning">
+                        <button type="submit" class="btn btn-warning btn-sm">
                             <i class="fa fa-check-circle-o"></i>
                             <span class="tooltip-text">Tandai Semua Dibaca</span>
                         </button>
                     </form>
 
                     <form action="../config/aksi_clear_notifikasi.php" method="POST" class="action-form">
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-danger btn-sm">
                             <i class="fa fa-trash-o"></i>
                             <span class="tooltip-text">Hapus Semua Notifikasi</span>
                         </button>

@@ -85,7 +85,6 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
         .btn-ya {
             background-color: #000;
-            width: 150px;
             color: white;
         }
 
@@ -102,6 +101,14 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         .hitam:hover {
             background-color: #000;
             color: #fff;
+        }
+        .custom-mt{
+            margin-top: 20px;
+        }
+        @media (max-width: 576px) {
+            .custom-mt{
+                margin-top: 90px !important;
+            }
         }
     </style>
 </head>
@@ -138,7 +145,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container custom-mt">
         <h2 class="mt-3 text-secondary text-center">Tambah Foto</h2>
         <div class="mb-5 row justify-content-center">
             <div class="col-md-8">
