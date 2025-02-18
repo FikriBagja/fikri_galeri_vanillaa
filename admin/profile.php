@@ -66,7 +66,7 @@ $photos_result = mysqli_query($koneksi, $query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fikri Galeri | Profile</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.css">
 
     <style>
         .profile-card {
@@ -188,7 +188,7 @@ $photos_result = mysqli_query($koneksi, $query);
         }
 
         .navbar-nav .nav-link.active {
-            background-color: #007bff;
+            background-color: #000;
             color: white;
             border-radius: 5px;
             font-weight: bold;
@@ -196,9 +196,11 @@ $photos_result = mysqli_query($koneksi, $query);
 
         .navbar-nav .nav-link:hover {
             background-color: #f1f1f1;
-            color: #007bff;
+            color: #000;
             transition: all 0.3s ease;
         }
+
+
 
         .hitam {
             border-color: #000;
@@ -233,11 +235,11 @@ $photos_result = mysqli_query($koneksi, $query);
                     </li>
                 </ul>
                 <a href="profile.php" class="nav-link position-relative" 
-                    style="margin-right: 30px; margin-bottom: 15px; margin-top:10px;">
-                    <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
+                    style="margin-right: 30px; margin-bottom: 15px; margin-top:14px;">
+                    <i class="fa fa-user-o" style="font-weight: bold; font-size: 1.3em;"></i>
                 </a>
                 <a href="notifikasi.php" class="nav-link position-relative">
-                    <i class="fa-regular fa-bell" style="font-weight: bold; font-size: 1.3em;"></i>
+                    <i class="fa fa-bell-o" style="font-weight: bold; font-size: 1.3em;"></i>
                     <span class="top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         <?php echo $belum_dibaca ?: '0'; ?>
                     </span>

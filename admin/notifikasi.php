@@ -31,7 +31,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fikri Galeri | Notifikasi</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.css">
     <style>
         .notification-card {
             border: 1px solid #ddd;
@@ -175,11 +175,12 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                         <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
                     </li>
                 </ul>
-                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px; margin-bottom: 15px; margin-top:10px;">
-                    <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
+                <a href="profile.php" class="nav-link position-relative" 
+                    style="margin-right: 30px; margin-bottom: 15px; margin-top:15px;">
+                    <i class="fa fa-user-o" style="font-weight: bold; font-size: 1.3em;"></i>
                 </a>
                 <a href="notifikasi.php" class="nav-link position-relative">
-                    <i class="fa-regular fa-bell" style="font-weight: bold; font-size: 1.3em;"></i>
+                    <i class="fa fa-bell-o" style="font-weight: bold; font-size: 1.3em; margin-top:4px;"></i>
                     <span class="top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         <?php echo $belum_dibaca ?: '0'; ?>
                     </span>
@@ -196,14 +197,14 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                 <div class="action-buttons">
                     <form action="../config/aksi_tandai_baca.php" method="POST" class="action-form">
                         <button type="submit" class="btn btn-warning">
-                            <i class="fa-solid fa-check-circle"></i>
+                            <i class="fa fa-check-circle-o"></i>
                             <span class="tooltip-text">Tandai Semua Dibaca</span>
                         </button>
                     </form>
 
                     <form action="../config/aksi_clear_notifikasi.php" method="POST" class="action-form">
                         <button type="submit" class="btn btn-danger">
-                            <i class="fa-solid fa-trash-alt"></i>
+                            <i class="fa fa-trash-o"></i>
                             <span class="tooltip-text">Hapus Semua Notifikasi</span>
                         </button>
                     </form>
@@ -265,9 +266,6 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         <?php endif; ?>
     </div>
 
-    <footer class="py-3 mt-5 footer d-flex justify-content-center border-top">
-        <p>&copy;Fikri Bagja Ramadhan</p>
-    </footer>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

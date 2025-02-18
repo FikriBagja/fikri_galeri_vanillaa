@@ -41,7 +41,7 @@ $photos_result = mysqli_query($koneksi, $query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fikri Galeri | Dashboard</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.css">
     <style>
         .profile-card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -125,7 +125,7 @@ $photos_result = mysqli_query($koneksi, $query);
         }
 
         .navbar-nav .nav-link.active {
-            background-color: #007bff;
+            background-color: #000;
             color: white;
             border-radius: 5px;
             font-weight: bold;
@@ -133,9 +133,10 @@ $photos_result = mysqli_query($koneksi, $query);
 
         .navbar-nav .nav-link:hover {
             background-color: #f1f1f1;
-            color: #007bff;
+            color: #000;
             transition: all 0.3s ease;
         }
+
 
         .hitam {
             border-color: #000;
@@ -169,11 +170,11 @@ $photos_result = mysqli_query($koneksi, $query);
                         <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
                     </li>
                 </ul>
-                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px; margin-bottom: 15px; margin-top:10px;">
-                    <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
+                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px; margin-bottom: 15px; margin-top:14px;">
+                    <i class="fa fa-user-o" style="font-weight: bold; font-size: 1.3em;"></i>
                 </a>
                 <a href="notifikasi.php" class="nav-link position-relative">
-                    <i class="fa-regular fa-bell" style="font-weight: bold; font-size: 1.3em;"></i>
+                    <i class="fa fa-bell-o" style="font-weight: bold; font-size: 1.3em;"></i>
                     <span class="top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         <?php echo $belum_dibaca ?: '0'; ?>
                     </span>
@@ -253,13 +254,13 @@ $photos_result = mysqli_query($koneksi, $query);
                                 if (mysqli_num_rows($ceksuka) == 1) { ?>
                                     <a href="../config/proses_like_index.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="batalsuka"> <i class="fa fa-heart"></i> </a>
                                 <?php } else { ?>
-                                    <a href="../config/proses_like_index.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="suka"> <i class="fa-regular fa-heart"></i> </a>
+                                    <a href="../config/proses_like_index.php?fotoid=<?php echo $data['fotoid'] ?>" type="submit" name="suka"> <i class="fa fa-heart-o"></i> </a>
                                 <?php }
 
                                 $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
                                 echo mysqli_num_rows($like) . ' Suka';
                                 ?>
-                                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa-regular fa-comment"></i> </a>
+                                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa fa-comments-o"></i> </a>
                                 <?php
                                 $jmlkomen = mysqli_query($koneksi, "SELECT * FROM komentarfoto WHERE fotoid = '$fotoid'");
 
