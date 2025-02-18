@@ -27,13 +27,22 @@ $hasil = mysqli_query($koneksi, $hitung_notif);
 $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
 $filter = isset($_GET['filter']) ? $_GET['filter'] : 'tanggal';
-$order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+$order = isset($_GET['order']) && in_array($_GET['order'], ['ASC', 'DESC']) ? $_GET['order'] : 'DESC';
 
-if (isset($_GET['albumid'])) {
-    $albumid = $_GET['albumid'];
-    $query = "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.albumid='$albumid' AND foto.userid='$userid'";
+$userid = isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
+
+$albumid = isset($_GET['albumid']) ? mysqli_real_escape_string($koneksi, $_GET['albumid']) : null;
+
+if ($albumid) {
+    $query = "SELECT * FROM foto 
+              INNER JOIN user ON foto.userid=user.userid 
+              INNER JOIN album ON foto.albumid=album.albumid 
+              WHERE foto.albumid='$albumid' AND foto.userid='$userid'";
 } else {
-    $query = "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.userid='$userid'";
+    $query = "SELECT * FROM foto 
+              INNER JOIN user ON foto.userid=user.userid 
+              INNER JOIN album ON foto.albumid=album.albumid 
+              WHERE foto.userid='$userid'";
 }
 
 if ($filter == 'like') {
@@ -41,10 +50,12 @@ if ($filter == 'like') {
 } elseif ($filter == 'komen') {
     $query .= " ORDER BY (SELECT COUNT(*) FROM komentarfoto WHERE komentarfoto.fotoid = foto.fotoid) $order";
 } elseif ($filter == 'tanggal') {
-    $query .= " ORDER BY foto.tanggalunggah $order";
+    $query .= " ORDER BY foto.tanggalunggah $order, foto.fotoid $order";
 }
 
+// Eksekusi query
 $photos_result = mysqli_query($koneksi, $query);
+
 ?>
 
 <!DOCTYPE html>
@@ -188,18 +199,28 @@ $photos_result = mysqli_query($koneksi, $query);
             color: #007bff;
             transition: all 0.3s ease;
         }
+
+        .hitam {
+            border-color: #000;
+            color: #000;
+        }
+
+        .hitam:hover {
+            background-color: #000;
+            color: #fff;
+        }
     </style>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
+    <nav class="p-10 shadow-lg navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Fikri Galeri</a>
+            <a class="navbar-brand fw-bold" href="index.php">Fikri Galeri</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse mt-1" id="navbarNav">
+            <div class="mt-1 collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a href="index.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>">Home</a>
@@ -226,17 +247,17 @@ $photos_result = mysqli_query($koneksi, $query);
 
     <div class="container p-3 d-flex justify-content-center" style="margin-bottom: 100px; margin-top: 70px;">
 
-        <div class="card px-5 py-4">
+        <div class="px-5 py-4 card">
             <div class="image d-flex flex-column justify-content-center align-items-center">
                 <button class="btn btn-secondary">
                     <img src="../assets/avatar/avatar.png" height="100" width="100" title="<?php echo $user['username'] ?>" />
                 </button>
-                <span class="name mt-3"><strong><?php echo $user['username'] ?></strong></span>
+                <span class="mt-3 name"><strong><?php echo $user['username'] ?></strong></span>
                 <span class="id text-secondary"><?php echo $user['namalengkap'] ?></span>
 
-                <div class="d-flex gap-3 mt-3">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-                    <a href="../config/aksi_logout.php" class="btn btn-outline-success">Logout</a>
+                <div class="gap-3 mt-3 d-flex">
+                    <button type="button" class="btn hitam" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+                    <a href="../config/aksi_logout.php" class="btn btn-outline-danger">Logout</a>
                 </div>
             </div>
         </div>
@@ -275,7 +296,7 @@ $photos_result = mysqli_query($koneksi, $query);
                         </div>
 
                         <div class="modal-footer">
-                            <button type="submit" name="editProfile" class="btn btn-primary">Edit</button>
+                            <button type="submit" name="editProfile" class="btn btn-success">Edit</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         </div>
                     </form>
@@ -286,26 +307,30 @@ $photos_result = mysqli_query($koneksi, $query);
 
     <div class="container mt-3">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center w-100" style="margin-bottom: 15px;">
-            <h3 class="text-secondary mb-0 me-3" style="margin-top: -15px;">Semua Foto <?php echo $user['username'] ?></h3>
+            <h2 class="text-secondary">
+                <a href="?filter=random" class="link-offset-2 link-underline link-underline-opacity-0 text-secondary">Semua Foto <?php echo $_SESSION['username'] ?></a>
+            </h2>
         </div>
 
         <form method="GET" action="profile.php" class="mb-3">
             <div class="row">
-                <div class="col-md-4 mb-2">
-                    <select name="filter" class="form-select">
+                <div class="mb-2 col-md-4">
+                    <select name="filter" class="form-select text-center" id="filterSelect">
+                        <option value="" selected disabled>Pilih Berdasarkan</option>
                         <option value="like" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'like') ? 'selected' : ''; ?>>Berdasarkan Like</option>
                         <option value="komen" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'komen') ? 'selected' : ''; ?>>Berdasarkan Komentar</option>
                         <option value="tanggal" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'tanggal') ? 'selected' : ''; ?>>Berdasarkan Tanggal Unggah</option>
                     </select>
                 </div>
-                <div class="col-md-4 mb-2">
-                    <select name="order" class="form-select">
+                <div class="mb-2 col-md-4">
+                    <select name="order" class="form-select text-center" id="orderSelect" disabled>
+                        <option value="" selected disabled>Pilih Urutan</option>
                         <option value="ASC" <?php echo (isset($_GET['order']) && $_GET['order'] == 'ASC') ? 'selected' : ''; ?>>Ascending</option>
                         <option value="DESC" <?php echo (isset($_GET['order']) && $_GET['order'] == 'DESC') ? 'selected' : ''; ?>>Descending</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary form-control">Filter</button>
+                    <button type="submit" class="btn hitam form-control">Filter</button>
                 </div>
             </div>
         </form>
@@ -313,13 +338,22 @@ $photos_result = mysqli_query($koneksi, $query);
         <div class="row" style="margin-top : -33px">
             <?php
             $filter = isset($_GET['filter']) ? $_GET['filter'] : 'tanggal';
-            $order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+            $order = isset($_GET['order']) && in_array($_GET['order'], ['ASC', 'DESC']) ? $_GET['order'] : 'DESC';
 
-            if (isset($_GET['albumid'])) {
-                $albumid = $_GET['albumid'];
-                $query = "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.albumid='$albumid' AND foto.userid='$userid'";
+            $userid = isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
+
+            $albumid = isset($_GET['albumid']) ? mysqli_real_escape_string($koneksi, $_GET['albumid']) : null;
+
+            if ($albumid) {
+                $query = "SELECT * FROM foto 
+                         INNER JOIN user ON foto.userid=user.userid 
+                         INNER JOIN album ON foto.albumid=album.albumid 
+                         WHERE foto.albumid='$albumid' AND foto.userid='$userid'";
             } else {
-                $query = "SELECT * FROM foto INNER JOIN user ON foto.userid=user.userid INNER JOIN album ON foto.albumid=album.albumid WHERE foto.userid='$userid'";
+                $query = "SELECT * FROM foto 
+                         INNER JOIN user ON foto.userid=user.userid 
+                         INNER JOIN album ON foto.albumid=album.albumid 
+                         WHERE foto.userid='$userid'";
             }
 
             if ($filter == 'like') {
@@ -327,17 +361,21 @@ $photos_result = mysqli_query($koneksi, $query);
             } elseif ($filter == 'komen') {
                 $query .= " ORDER BY (SELECT COUNT(*) FROM komentarfoto WHERE komentarfoto.fotoid = foto.fotoid) $order";
             } elseif ($filter == 'tanggal') {
-                $query .= " ORDER BY foto.tanggalunggah $order";
+                $query .= " ORDER BY foto.tanggalunggah $order, foto.fotoid $order";
             }
 
+            if ($filter == 'random') {
+                $query .= " ORDER BY RAND()";
+            }
             $photos_result = mysqli_query($koneksi, $query);
 
+
             while ($data = mysqli_fetch_assoc($photos_result)) { ?>
-                <div class="col-md-3 mt-3">
+                <div class="mt-3 col-md-3">
                     <a type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>">
                         <div class="card">
                             <img style="height: 12rem;" src="../assets/img/<?php echo $data['lokasifile'] ?>" class="card-img-top" title="<?php echo $data['judulfoto'] ?>">
-                            <div class="card-footer text-center">
+                            <div class="text-center card-footer">
 
                                 <?php
                                 $fotoid = $data['fotoid'];
@@ -397,7 +435,7 @@ $photos_result = mysqli_query($koneksi, $query);
                                                     $komentar = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE komentarfoto.fotoid='$fotoid' AND reply_komen IS NULL");
                                                     ?>
 
-                                                    <h5 class="text-secondary mb-3">
+                                                    <h5 class="mb-3 text-secondary">
                                                         <strong><?php echo mysqli_num_rows($komentar); ?> Komentar</strong>
                                                     </h5>
 
@@ -432,7 +470,6 @@ $photos_result = mysqli_query($koneksi, $query);
                                                         </div>
 
                                                         <?php
-                                                        // Menampilkan reply dari komentar ini
                                                         $replies = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE reply_komen = '" . $row['komentarid'] . "'");
                                                         while ($reply = mysqli_fetch_array($replies)) {
                                                         ?>
@@ -468,9 +505,46 @@ $photos_result = mysqli_query($koneksi, $query);
         </div>
     </div>
 
-    <footer class="footer d-flex justify-content-center border-top mt-5 py-3">
+    <footer class="py-3 mt-5 shadow-lg d-flex justify-content-center">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterSelect = document.getElementById('filterSelect');
+            const orderSelect = document.getElementById('orderSelect');
+            const urlParams = new URLSearchParams(window.location.search);
+
+            filterSelect.addEventListener('change', function() {
+                const filterValue = filterSelect.value;
+                orderSelect.innerHTML = '';
+
+                if (filterValue) {
+                    orderSelect.disabled = false;
+                    if (filterValue === 'like' || filterValue === 'komen') {
+                        orderSelect.innerHTML = `
+                        <option value="ASC" ${urlParams.get('order') === 'ASC' ? 'selected' : ''}>Tersedikit</option>
+                        <option value="DESC" ${urlParams.get('order') === 'DESC' ? 'selected' : ''}>Terbanyak</option>
+                    `;
+                    } else if (filterValue === 'tanggal') {
+                        orderSelect.innerHTML = `
+                        <option value="ASC" ${urlParams.get('order') === 'ASC' ? 'selected' : ''}>Terlama</option>
+                        <option value="DESC" ${urlParams.get('order') === 'DESC' ? 'selected' : ''}>Terbaru</option>
+                    `;
+                    }
+                } else {
+                    orderSelect.disabled = true;
+                    orderSelect.innerHTML = `<option value="" selected disabled>Pilih Urutan</option>`;
+                }
+            });
+
+            if (urlParams.get('filter')) {
+                filterSelect.value = urlParams.get('filter');
+                filterSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -124,7 +124,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             visibility: visible;
             opacity: 1;
         }
-     
+
         .navbar-nav .nav-link:hover {
             background-color: #f1f1f1;
             color: #007bff;
@@ -157,13 +157,13 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light shadow-lg p-3 bg-body-tertiary">
+    <nav class="p-10 shadow-lg navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Fikri Galeri</a>
+            <a class="navbar-brand fw-bold" href="index.php">Fikri Galeri</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse mt-1" id="navbarNav">
+            <div class="mt-1 collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a href="index.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>">Home</a>
@@ -175,7 +175,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                         <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
                     </li>
                 </ul>
-                <a href="profile.php" class="nav-link position-relative"style="margin-right: 30px; margin-bottom: 15px; margin-top:10px;">
+                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px; margin-bottom: 15px; margin-top:10px;">
                     <i class="fa-regular fa-user" style="font-weight: bold; font-size: 1.3em;"></i>
                 </a>
                 <a href="notifikasi.php" class="nav-link position-relative">
@@ -265,7 +265,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         <?php endif; ?>
     </div>
 
-    <footer class="footer d-flex justify-content-center border-top mt-5 py-3">
+    <footer class="py-3 mt-5 footer d-flex justify-content-center border-top">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer>
 
