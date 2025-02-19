@@ -1,14 +1,23 @@
 <?php
 session_start();
 include 'config/koneksi.php';
-$filter = isset($_GET['filter']) ? $_GET['filter'] : 'tanggal';
-$order = isset($_GET['order']) && in_array(strtoupper($_GET['order']), ['ASC', 'DESC']) ? $_GET['order'] : 'DESC';
+
+$per_page = 8;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start = ($page > 1) ? ($page * $per_page) - $per_page : 0;
 
 $query = "SELECT * FROM foto 
           INNER JOIN user ON foto.userid = user.userid 
-          INNER JOIN album ON foto.albumid = album.albumid ORDER BY RAND()";
+          INNER JOIN album ON foto.albumid = album.albumid ORDER BY foto.fotoid DESC LIMIT $start, $per_page";
 
 $photos_result = mysqli_query($koneksi, $query);
+
+$total_query = "SELECT COUNT(*) AS total FROM foto";
+$total_result = mysqli_query($koneksi, $total_query);
+$total_row = mysqli_fetch_assoc($total_result);
+$total = $total_row['total'];
+
+$pages = ceil($total / $per_page);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -140,7 +149,7 @@ $photos_result = mysqli_query($koneksi, $query);
             Semua Foto
         </h2>
 
-        <div class="row">
+        <div class="row" style="margin-top: -10px;">
 
             <?php
             while ($data = mysqli_fetch_assoc($photos_result)) {
@@ -163,9 +172,7 @@ $photos_result = mysqli_query($koneksi, $query);
                                 <?php
                                 $like = mysqli_query($koneksi, "SELECT * FROM likefoto WHERE fotoid='$fotoid'");
                                 echo mysqli_num_rows($like) . ' Suka';
-                                ?>
-
-                                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa fa-comments-o"></i>
+                                ?>... <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa fa-comments-o"></i>
                                 </a>
                                 <?php
                                 $jmlkomen = mysqli_query($koneksi, "SELECT * FROM komentarfoto WHERE fotoid = '$fotoid'");
@@ -222,12 +229,10 @@ $photos_result = mysqli_query($koneksi, $query);
                                                             <p class="comment-date">
                                                                 <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
                                                             </p>
-                                                        </div>
-
-                                                        <?php
-                                                        $replies = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE reply_komen = '" . $row['komentarid'] . "'");
-                                                        while ($reply = mysqli_fetch_array($replies)) {
-                                                        ?>
+                                                        </div>... <?php
+                                                                    $replies = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE reply_komen = '" . $row['komentarid'] . "'");
+                                                                    while ($reply = mysqli_fetch_array($replies)) {
+                                                                    ?>
                                                             <div class="comment-item" style="margin-left: 30px;">
                                                                 <p class="comment-author">
                                                                 <p><i class="fa fa-user-circle-o"></i> <strong><?php echo $reply['username']; ?></strong></p>
@@ -257,6 +262,29 @@ $photos_result = mysqli_query($koneksi, $query);
                 </div>
             <?php } ?>
         </div>
+        <nav aria-label="Page navigation" style="margin-top: 25px;">
+            <ul class="pagination justify-content-center">
+                <?php if ($page > 1) { ?>
+                    <li class="page-item">
+                        <a class="page-link" href="index.php?page=<?php echo ($page - 1); ?>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                <?php } ?>
+                <?php for ($i = 1; $i <= $pages; $i++) { ?>
+                    <li class="page-item <?php if ($page == $i) echo 'active'; ?>">
+                        <a class="page-link" href="index.php?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php } ?>
+                <?php if ($page < $pages) { ?>
+                    <li class="page-item">
+                        <a class="page-link" href="index.php?page=<?php echo ($page + 1); ?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                <?php } ?>
+            </ul>
+        </nav>
     </div>
     <script>
         function showModal() {
@@ -275,12 +303,10 @@ $photos_result = mysqli_query($koneksi, $query);
             document.getElementById("modal").style.display = "flex";
         }
 
-        // Menutup modal
         function goBack() {
             document.getElementById("modal").style.display = "none";
         }
 
-        // Mengarahkan ke halaman login
         function goToLogin() {
             window.location.href = "login.php";
         }

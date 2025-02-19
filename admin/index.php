@@ -15,13 +15,17 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 $filter = isset($_GET['filter']) ? $_GET['filter'] : 'tanggal';
 $order = isset($_GET['order']) && in_array(strtoupper($_GET['order']), ['ASC', 'DESC']) ? $_GET['order'] : 'DESC';
 
+$per_page = 8;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start = ($page > 1) ? ($page * $per_page) - $per_page : 0;
+
 $query = "SELECT * FROM foto 
           INNER JOIN user ON foto.userid = user.userid 
           INNER JOIN album ON foto.albumid = album.albumid";
 
 if (isset($_GET['albumid'])) {
     $albumid = $_GET['albumid'];
-    $query .= " WHERE foto.albumid = $albumid ORDER BY RAND()";
+    $query .= " WHERE foto.albumid = $albumid";
 }
 if ($filter == 'like') {
     $query .= " ORDER BY (SELECT COUNT(*) FROM likefoto WHERE likefoto.fotoid = foto.fotoid) $order";
@@ -31,7 +35,20 @@ if ($filter == 'like') {
     $query .= " ORDER BY foto.tanggalunggah $order";
 }
 
+// Query untuk pagination
+$query .= " LIMIT $start, $per_page";
 $photos_result = mysqli_query($koneksi, $query);
+
+// Query untuk menghitung total data (untuk pagination)
+$total_query = "SELECT COUNT(*) AS total FROM foto";
+if (isset($_GET['albumid'])) {
+    $albumid = $_GET['albumid'];
+    $total_query .= " WHERE albumid = $albumid";
+}
+$total_result = mysqli_query($koneksi, $total_query);
+$total_row = mysqli_fetch_assoc($total_result);
+$total = $total_row['total'];
+$pages = ceil($total / $per_page);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -182,8 +199,6 @@ $photos_result = mysqli_query($koneksi, $query);
             </div>
         </div>
     </nav>
-
-
     <div class="container mt-3" style=" margin-bottom:20px;">
 
         <h2 class="text-secondary">
@@ -226,7 +241,6 @@ $photos_result = mysqli_query($koneksi, $query);
             if (isset($_GET['albumid'])) {
                 $albumid = $_GET['albumid'];
                 $query .= " WHERE foto.albumid = $albumid";
-                $query .= " ORDER BY RAND()";
             }
 
             if ($filter == 'like') {
@@ -236,12 +250,22 @@ $photos_result = mysqli_query($koneksi, $query);
             } elseif ($filter == 'tanggal') {
                 $query .= " ORDER BY foto.tanggalunggah $order, foto.fotoid $order";
             }
-
             if ($filter == 'random') {
                 $query .= " ORDER BY RAND()";
             }
 
+            $query .= " LIMIT $start, $per_page";
             $photos_result = mysqli_query($koneksi, $query);
+
+            $total_query = "SELECT COUNT(*) AS total FROM foto";
+            if (isset($_GET['albumid'])) {
+                $albumid = $_GET['albumid'];
+                $total_query .= " WHERE albumid = $albumid";
+            }
+            $total_result = mysqli_query($koneksi, $total_query);
+            $total_row = mysqli_fetch_assoc($total_result);
+            $total = $total_row['total'];
+            $pages = ceil($total / $per_page);
 
             while ($data = mysqli_fetch_assoc($photos_result)) { ?>
                 <div class="col-md-3">
@@ -266,7 +290,6 @@ $photos_result = mysqli_query($koneksi, $query);
                                 <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#komentar<?php echo $data['fotoid'] ?>"> <i class="fa fa-comments-o"></i> </a>
                                 <?php
                                 $jmlkomen = mysqli_query($koneksi, "SELECT * FROM komentarfoto WHERE fotoid = '$fotoid'");
-
                                 echo mysqli_num_rows($jmlkomen) . ' Komentar';
                                 ?>
                             </div>
@@ -320,40 +343,26 @@ $photos_result = mysqli_query($koneksi, $query);
                                                             <i class="fa fa-user-circle-o"></i> <strong><?php echo $row['username']; ?></strong>
                                                             </p>
                                                             <div class="comment-content">
-                                                                <p class="comment-text text-secondary" style="font-size: 0.9em;">
+                                                            <p class="comment-text text-secondary" style="font-size: 0.9em;">
                                                                     <?php echo $row['isikomentar']; ?>
                                                                 </p>
-                                                                <div class="comment-footer">
-                                                                    <p class="comment-date">
-                                                                        <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
-                                                                    </p>
-
-                                                                    <span class="text-secondary" style="font-size: 0.7em" data-bs-toggle="collapse" href="#reply<?php echo $row['komentarid']; ?>" role="button" aria-expanded="false" aria-controls="reply<?php echo $row['komentarid']; ?>">Balas</span>
-                                                                </div>
-
-                                                                <div class="collapse" id="reply<?php echo $row['komentarid']; ?>">
-                                                                    <form action="../config/proses_komentar_index.php" method="post">
-                                                                        <div class="input-group">
-                                                                            <input type="hidden" name="fotoid" value="<?php echo $fotoid; ?>">
-                                                                            <input type="hidden" name="reply_komen" value="<?php echo $row['komentarid']; ?>">
-                                                                            <input type="text" name="isikomentar" placeholder="Tulis balasan..." class="form-control" required>
-                                                                            <button type="submit" name="kirimkomentar" class="btn btn-outline-secondary">Kirim</button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
                                                             </div>
                                                         </div>
-
+                                                        <div class="comment-footer">
+                                                            <p class="comment-date">
+                                                                <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
+                                                            </p>
+                                                        </div>
                                                         <?php
                                                         $replies = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE reply_komen = '" . $row['komentarid'] . "'");
                                                         while ($reply = mysqli_fetch_array($replies)) {
                                                         ?>
                                                             <div class="comment-item" style="margin-left: 30px;">
                                                                 <p class="comment-author">
-                                                                <i class="fa fa-user-circle-o"></i> <strong><?php echo $reply['username']; ?></strong>
+                                                                <p><i class="fa fa-user-circle-o"></i> <strong><?php echo $reply['username']; ?></strong></p>
                                                                 </p>
                                                                 <div class="comment-content">
-                                                                    <p class="comment-text text-secondary" style="font-size: 0.9em;">
+                                                                    <p class="comment-text text-secondary" style="font-size: 0.9em; margin-top:-15px">
                                                                         <?php echo $reply['isikomentar']; ?>
                                                                     </p>
                                                                     <p class="comment-date" style="margin-top: -17px;">
@@ -377,11 +386,36 @@ $photos_result = mysqli_query($koneksi, $query);
                 </div>
             <?php } ?>
         </div>
+
+        <nav aria-label="Page navigation" style="margin-top: 25px;">
+            <ul class="pagination justify-content-center">
+                <?php if ($page > 1) { ?>
+                    <li class="page-item">
+                        <a class="page-link" href="index.php?page=<?php echo ($page - 1); ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                <?php } ?>
+
+                <?php for ($i = 1; $i <= $pages; $i++) { ?>
+                    <li class="page-item <?php if ($page == $i) echo 'active'; ?>">
+                        <a class="page-link" href="index.php?page=<?php echo $i; ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php } ?>
+
+                <?php if ($page < $pages) { ?>
+                    <li class="page-item">
+                        <a class="page-link" href="index.php?page=<?php echo ($page + 1); ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                <?php } ?>
+            </ul>
+        </nav>
+
     </div>
 
-    <!-- <footer class="py-3 mt-5 shadow-lg d-flex justify-content-center">
-        <p>&copy;Fikri Bagja Ramadhan</p>
-    </footer> -->
+    <script src="../assets/js/bootstrap.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -419,7 +453,6 @@ $photos_result = mysqli_query($koneksi, $query);
         });
     </script>
 
-    <script src="../assets/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
