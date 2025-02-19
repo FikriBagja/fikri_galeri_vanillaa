@@ -495,8 +495,20 @@ $photos_result = mysqli_query($koneksi, $query);
                                                         </div>
                                                         <div class="comment-footer">
                                                             <p class="comment-date">
-                                                                <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
+                                                                <small><?php echo date('d M Y H:i:s', strtotime($row['tanggalkomentar'])); ?></small>
                                                             </p>
+                                                            <span class="text-secondary" style="font-size: 0.7em" data-bs-toggle="collapse" href="#reply<?php echo $row['komentarid']; ?>" role="button" aria-expanded="false" aria-controls="reply<?php echo $row['komentarid']; ?>">Balas</span>
+                                                        </div>
+
+                                                        <div class="collapse" id="reply<?php echo $row['komentarid']; ?>">
+                                                            <form action="../config/proses_komentar.php" method="post">
+                                                                <div class="input-group">
+                                                                    <input type="hidden" name="fotoid" value="<?php echo $fotoid; ?>">
+                                                                    <input type="hidden" name="reply_komen" value="<?php echo $row['komentarid']; ?>">
+                                                                    <input type="text" name="isikomentar" placeholder="Tulis balasan..." class="form-control" required>
+                                                                    <button type="submit" name="kirimkomentar" class="btn btn-outline-secondary">Kirim</button>
+                                                                </div>
+                                                            </form>
                                                         </div>
                                                         <?php
                                                         $replies = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE reply_komen = '" . $row['komentarid'] . "'");
@@ -511,7 +523,7 @@ $photos_result = mysqli_query($koneksi, $query);
                                                                         <?php echo $reply['isikomentar']; ?>
                                                                     </p>
                                                                     <p class="comment-date" style="margin-top: -17px;">
-                                                                        <small><?php echo date('d M Y', strtotime($reply['tanggalkomentar'])); ?></small>
+                                                                        <small><?php echo date('d M Y H:i:s', strtotime($reply['tanggalkomentar'])); ?></small>
                                                                     </p>
                                                                 </div>
                                                             </div>
