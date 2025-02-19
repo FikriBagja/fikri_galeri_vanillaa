@@ -433,7 +433,7 @@ $photos_result = mysqli_query($koneksi, $query);
                                                 <div class="m-2">
                                                     <div class="overflow-auto">
                                                         <div class="sticky-top d-flex justify-content-between align-items-center">
-                                                            <p><strong><?php echo $data['username'] ?></strong></p>
+                                                            <p><i class="fa fa-user-circle-o"></i> <strong><?php echo $data['username'] ?></strong></p>
                                                             <a href="../assets/img/<?php echo $data['lokasifile'] ?>" download class="btn btn-outline-secondary btn-sm">
                                                                 <i class="fa fa-download"></i> Unduh
                                                             </a>
@@ -465,7 +465,7 @@ $photos_result = mysqli_query($koneksi, $query);
                                                         <?php while ($row = mysqli_fetch_array($komentar)) { ?>
                                                             <div class="comment-item">
                                                                 <p class="comment-author">
-                                                                    <strong><?php echo $row['username']; ?></strong>
+                                                                <i class="fa fa-user-circle-o"></i> <strong><?php echo $row['username']; ?></strong>
                                                                 </p>
                                                                 <div class="comment-content">
                                                                     <p class="comment-text text-secondary">
@@ -498,7 +498,7 @@ $photos_result = mysqli_query($koneksi, $query);
                                                             ?>
                                                                 <div class="comment-item" style="margin-left: 30px;">
                                                                     <p class="comment-author">
-                                                                        <strong><?php echo $reply['username']; ?></strong>
+                                                                    <i class="fa fa-user-circle-o"></i> <strong><?php echo $reply['username']; ?></strong>
                                                                     </p>
                                                                     <div class="comment-content">
                                                                         <p class="comment-text text-secondary">

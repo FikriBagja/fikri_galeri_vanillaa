@@ -137,7 +137,7 @@ $photos_result = mysqli_query($koneksi, $query);
     <div class="container mt-3" style=" margin-bottom:20px;">
 
         <h2 class="text-secondary">
-            <a href="?filter=random" class="link-offset-2 link-underline link-underline-opacity-0 text-secondary">Semua Foto</a>
+            Semua Foto
         </h2>
 
         <div class="row">
@@ -155,7 +155,7 @@ $photos_result = mysqli_query($koneksi, $query);
 
                                 <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; text-align: center; z-index: 9999;">
                                     <div style="background-color: white; padding: 20px; border-radius: 10px; width: 300px;">
-                                        <p>Anda harus login dulu untuk menyukai foto</p>
+                                        <p>Anda harus login terlebih dahulu</p>
                                         <button onclick="goBack()">Kembali</button>
                                         <button onclick="goToLogin()">Login</button>
                                     </div>
@@ -185,20 +185,11 @@ $photos_result = mysqli_query($koneksi, $query);
                                             <div class="m-2">
                                                 <div class="overflow-auto">
                                                     <div class="sticky-top d-flex justify-content-between align-items-center">
-                                                        <p><strong><?php echo $data['username'] ?></strong></p>
-                                                        <!-- Tombol Unduh -->
-                                                        <p class="btn hitam btn-sm" onclick="showModal2()">
+                                                        <p><i class="fa fa-user-circle-o"></i> <strong><?php echo $data['username'] ?></strong></p>
+                                                        <p class="btn hitam btn-sm" onclick="showModal()">
                                                             <i class="fa fa-download"></i> Unduh
                                                         </p>
 
-                                                        <!-- Modal -->
-                                                        <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; text-align: center; z-index: 9999;">
-                                                            <div style="background-color: white; padding: 20px; border-radius: 10px; width: 300px;">
-                                                                <p>Anda harus login untuk mengunduh gambar.</p>
-                                                                <button onclick="goBack()">Kembali</button>
-                                                                <button onclick="goToLogin()">Login</button>
-                                                            </div>
-                                                        </div>
                                                     </div>
 
                                                     <strong><?php echo $data['judulfoto'] ?></strong>
@@ -219,13 +210,18 @@ $photos_result = mysqli_query($koneksi, $query);
                                                     <?php while ($row = mysqli_fetch_array($komentar)) { ?>
                                                         <div class="comment-item">
                                                             <p class="comment-author">
-                                                                <strong><?php echo $row['username']; ?></strong>
+                                                                <i class="fa fa-user-circle-o"></i> <strong><?php echo $row['username']; ?></strong>
                                                             </p>
                                                             <div class="comment-content">
                                                                 <p class="comment-text text-secondary" style="font-size: 0.9em;">
                                                                     <?php echo $row['isikomentar']; ?>
                                                                 </p>
                                                             </div>
+                                                        </div>
+                                                        <div class="comment-footer">
+                                                            <p class="comment-date">
+                                                                <small><?php echo date('d M Y', strtotime($row['tanggalkomentar'])); ?></small>
+                                                            </p>
                                                         </div>
 
                                                         <?php
@@ -234,10 +230,10 @@ $photos_result = mysqli_query($koneksi, $query);
                                                         ?>
                                                             <div class="comment-item" style="margin-left: 30px;">
                                                                 <p class="comment-author">
-                                                                    <strong><?php echo $reply['username']; ?></strong>
+                                                                <p><i class="fa fa-user-circle-o"></i> <strong><?php echo $reply['username']; ?></strong></p>
                                                                 </p>
                                                                 <div class="comment-content">
-                                                                    <p class="comment-text text-secondary" style="font-size: 0.9em;">
+                                                                    <p class="comment-text text-secondary" style="font-size: 0.9em; margin-top:-15px">
                                                                         <?php echo $reply['isikomentar']; ?>
                                                                     </p>
                                                                     <p class="comment-date" style="margin-top: -17px;">
