@@ -159,6 +159,9 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                         <?php echo $belum_dibaca ?: '0'; ?>
                     </span>
                 </a>
+                <a href="laporan.php" class="nav-link position-relative" style="margin-right: 30px; margin-bottom: 15px; margin-top:14px;">
+                    <i class="fa fa-file-text-o" style="font-weight: bold; font-size: 1.3em;"></i>
+                </a>
             </div>
         </div>
     </nav>
