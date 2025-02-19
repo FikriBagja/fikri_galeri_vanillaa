@@ -36,7 +36,7 @@ $result = mysqli_query($koneksi, $query);
         }
 
         .navbar-nav .nav-link.active {
-            background-color: #007bff;
+            background-color: #000;
             color: white;
             border-radius: 5px;
             font-weight: bold;
@@ -44,7 +44,7 @@ $result = mysqli_query($koneksi, $query);
 
         .navbar-nav .nav-link:hover {
             background-color: #f1f1f1;
-            color: #007bff;
+            color: #000;
             transition: all 0.3s ease;
         }
 
@@ -74,7 +74,7 @@ $result = mysqli_query($koneksi, $query);
         }
 
         .table th {
-            background-color: #007bff;
+            background-color: #000;
             color: white;
         }
 
@@ -99,13 +99,25 @@ $result = mysqli_query($koneksi, $query);
         }
 
         .btn-reject {
-            background-color: #dc3545;
-            width: 90px;
-            color: white;
+            background-color: red;
+            width: 75px;
+            color: #fff;
         }
 
         .btn-reject:hover {
-            background-color: #c82333;
+            border-color: red;
+            color: #000;
+        }
+
+        .yes {
+            background-color: #000;
+            color: #fff;
+            width: 75px;
+        }
+
+        .yes:hover {
+            border-color: #000;
+            color: #000;
         }
     </style>
 </head>
@@ -154,7 +166,7 @@ $result = mysqli_query($koneksi, $query);
                             <td>{$row['namalengkap']}</td>
                             <td>{$row['status']}</td>
                             <td>
-                                <a href='config/approve.php?userid={$row['userid']}' class='btn btn-approve btn-custom'>Setujui</a>
+                                <a href='config/approve.php?userid={$row['userid']}' class='btn yes btn-custom'>Setujui</a>
                                 <a href='config/reject.php?userid={$row['userid']}' class='btn btn-reject btn-custom'>Tolak</a>
                             </td>
                         </tr>";
