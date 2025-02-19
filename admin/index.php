@@ -32,7 +32,10 @@ if ($filter == 'like') {
 } elseif ($filter == 'komen') {
     $query .= " ORDER BY (SELECT COUNT(*) FROM komentarfoto WHERE komentarfoto.fotoid = foto.fotoid) $order";
 } elseif ($filter == 'tanggal') {
-    $query .= " ORDER BY foto.tanggalunggah $order";
+    $query .= " ORDER BY foto.tanggalunggah $order, foto.fotoid $order";
+}
+if ($filter == 'random') {
+    $query .= " ORDER BY RAND()";
 }
 
 // Query untuk pagination
@@ -154,7 +157,6 @@ $pages = ceil($total / $per_page);
             transition: all 0.3s ease;
         }
 
-
         .hitam {
             border-color: #000;
             color: #000;
@@ -204,9 +206,8 @@ $pages = ceil($total / $per_page);
         <h2 class="text-secondary">
             <a href="?filter=random" class="link-offset-2 link-underline link-underline-opacity-0 text-secondary">Semua Foto</a>
         </h2>
-
-        <div class="row" style="margin-top : 20px">
-            <div class="col-md-6">
+        <div class="row" style="margin-top: 20px">
+            <div class="col-md-9">
                 <form method="GET" action="index.php">
                     <div class="row">
                         <div class="mb-2 col-md-4">
@@ -215,31 +216,54 @@ $pages = ceil($total / $per_page);
                                 <option value="like" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'like') ? 'selected' : ''; ?>>Berdasarkan Like</option>
                                 <option value="komen" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'komen') ? 'selected' : ''; ?>>Berdasarkan Komentar</option>
                                 <option value="tanggal" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'tanggal') ? 'selected' : ''; ?>>Berdasarkan Tanggal Unggah</option>
+                                <option value="album" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'album') ? 'selected' : ''; ?>>Berdasarkan Album</option>
                             </select>
                         </div>
+
+                        <div class="mb-2 col-md-4">
+                            <select name="albumid" class="form-select text-center" id="albumSelect">
+                                <option value="" selected disabled>Pilih Album</option>
+                                <?php
+                                $albums_query = "SELECT album.albumid, album.namaalbum, user.username 
+                         FROM album 
+                         JOIN user ON album.userid = user.userid";
+                                $albums_result = mysqli_query($koneksi, $albums_query);
+                                while ($album = mysqli_fetch_assoc($albums_result)) :
+                                ?>
+                                    <option value="<?php echo $album['albumid']; ?>" <?php if (isset($_GET['albumid']) && $_GET['albumid'] == $album['albumid']) echo 'selected'; ?>>
+                                        <?php echo $album['namaalbum'] . ' (' . $album['username'] . ')'; ?>
+                                    </option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+
+                        <!-- Dropdown untuk memilih urutan -->
                         <div class="mb-2 col-md-4">
                             <select name="order" class="form-select text-center" id="orderSelect" disabled>
                                 <option value="" selected disabled>Pilih Urutan</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+
+                        <div class="col-md-12">
                             <button type="submit" class="btn hitam form-control">Filter</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-        <div class="row">
 
+        <div class="row">
             <?php
 
             $filter = isset($_GET['filter']) ? $_GET['filter'] : 'tanggal';
             $order = isset($_GET['order']) && in_array(strtoupper($_GET['order']), ['ASC', 'DESC']) ? $_GET['order'] : 'DESC';
+            $albumid = isset($_GET['albumid']) ? $_GET['albumid'] : null;
 
-            $query = "SELECT * FROM foto INNER JOIN user ON foto.userid = user.userid INNER JOIN album ON foto.albumid = album.albumid";
+            $query = "SELECT * FROM foto 
+                      INNER JOIN user ON foto.userid = user.userid 
+                      INNER JOIN album ON foto.albumid = album.albumid";
 
-            if (isset($_GET['albumid'])) {
-                $albumid = $_GET['albumid'];
+            if ($filter == 'album' && $albumid) {
                 $query .= " WHERE foto.albumid = $albumid";
             }
 
@@ -249,19 +273,20 @@ $pages = ceil($total / $per_page);
                 $query .= " ORDER BY (SELECT COUNT(*) FROM komentarfoto WHERE komentarfoto.fotoid = foto.fotoid) $order";
             } elseif ($filter == 'tanggal') {
                 $query .= " ORDER BY foto.tanggalunggah $order, foto.fotoid $order";
-            }
-            if ($filter == 'random') {
+            } elseif ($filter == 'random') {
                 $query .= " ORDER BY RAND()";
             }
 
+            // Query untuk pagination
             $query .= " LIMIT $start, $per_page";
             $photos_result = mysqli_query($koneksi, $query);
 
+            // Query untuk menghitung total data (untuk pagination)
             $total_query = "SELECT COUNT(*) AS total FROM foto";
-            if (isset($_GET['albumid'])) {
-                $albumid = $_GET['albumid'];
+            if ($filter == 'album' && $albumid) {
                 $total_query .= " WHERE albumid = $albumid";
             }
+
             $total_result = mysqli_query($koneksi, $total_query);
             $total_row = mysqli_fetch_assoc($total_result);
             $total = $total_row['total'];
@@ -312,7 +337,6 @@ $pages = ceil($total / $per_page);
                                                             <i class="fa fa-download"></i> Unduh
                                                         </a>
                                                     </div>
-
                                                     <strong><?php echo $data['judulfoto'] ?></strong>
                                                     <p align="left" class="text-secondary" style="font-size: 0.9em;"><?php echo $data['deskripsifoto'] ?></p>
                                                     <span class="badge bg-secondary"><?php echo $data['tanggalunggah'] ?></span>
@@ -340,10 +364,10 @@ $pages = ceil($total / $per_page);
                                                     <?php while ($row = mysqli_fetch_array($komentar)) { ?>
                                                         <div class="comment-item">
                                                             <p class="comment-author">
-                                                            <i class="fa fa-user-circle-o"></i> <strong><?php echo $row['username']; ?></strong>
+                                                                <i class="fa fa-user-circle-o"></i> <strong><?php echo $row['username']; ?></strong>
                                                             </p>
                                                             <div class="comment-content">
-                                                            <p class="comment-text text-secondary" style="font-size: 0.9em;">
+                                                                <p class="comment-text text-secondary" style="font-size: 0.9em;">
                                                                     <?php echo $row['isikomentar']; ?>
                                                                 </p>
                                                             </div>
@@ -387,11 +411,12 @@ $pages = ceil($total / $per_page);
             <?php } ?>
         </div>
 
+        <!-- Pagination -->
         <nav aria-label="Page navigation" style="margin-top: 25px;">
             <ul class="pagination justify-content-center">
                 <?php if ($page > 1) { ?>
                     <li class="page-item">
-                        <a class="page-link" href="index.php?page=<?php echo ($page - 1); ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>" aria-label="Previous">
+                        <a class="page-link" href="index.php?page=<?php echo ($page - 1); ?>&filter=<?php echo $filter; ?><?php if (isset($_GET['albumid'])) echo '&albumid=' . $_GET['albumid']; ?>&order=<?php echo $order; ?>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
@@ -399,59 +424,72 @@ $pages = ceil($total / $per_page);
 
                 <?php for ($i = 1; $i <= $pages; $i++) { ?>
                     <li class="page-item <?php if ($page == $i) echo 'active'; ?>">
-                        <a class="page-link" href="index.php?page=<?php echo $i; ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>"><?php echo $i; ?></a>
+                        <a class="page-link" href="index.php?page=<?php echo $i; ?>&filter=<?php echo $filter; ?><?php if (isset($_GET['albumid'])) echo '&albumid=' . $_GET['albumid']; ?>&order=<?php echo $order; ?>"><?php echo $i; ?></a>
                     </li>
                 <?php } ?>
 
                 <?php if ($page < $pages) { ?>
                     <li class="page-item">
-                        <a class="page-link" href="index.php?page=<?php echo ($page + 1); ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>" aria-label="Next">
+                        <a class="page-link" href="index.php?page=<?php echo ($page + 1); ?>&filter=<?php echo $filter; ?><?php if (isset($_GET['albumid'])) echo '&albumid=' . $_GET['albumid']; ?>&order=<?php echo $order; ?>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
                 <?php } ?>
             </ul>
         </nav>
-
     </div>
+
+    <!-- <footer class="py-3 mt-3 shadow-lg d-flex justify-content-center fixed-bottom">
+        <p>&copy;Fikri Bagja Ramadhan</p>
+    </footer> -->
 
     <script src="../assets/js/bootstrap.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterSelect = document.getElementById('filterSelect');
-            const orderSelect = document.getElementById('orderSelect');
-            const urlParams = new URLSearchParams(window.location.search);
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterSelect = document.getElementById('filterSelect');
+        const orderSelect = document.getElementById('orderSelect');
+        const albumSelect = document.getElementById('albumSelect');
+        const urlParams = new URLSearchParams(window.location.search);
 
-            filterSelect.addEventListener('change', function() {
-                const filterValue = filterSelect.value;
-                orderSelect.innerHTML = '';
+        // Pastikan albumSelect dan orderSelect dinonaktifkan secara default
+        albumSelect.disabled = true;
+        orderSelect.disabled = true;
 
-                if (filterValue) {
-                    orderSelect.disabled = false;
-                    if (filterValue === 'like' || filterValue === 'komen') {
-                        orderSelect.innerHTML = `
+        filterSelect.addEventListener('change', function() {
+            const filterValue = filterSelect.value;
+
+            // Reset dropdowns
+            orderSelect.innerHTML = '';
+            albumSelect.disabled = true; // Nonaktifkan album select secara default
+            orderSelect.disabled = true; // Nonaktifkan order select secara default
+
+            if (filterValue) {
+                if (filterValue === 'like' || filterValue === 'komen') {
+                    orderSelect.disabled = false; // Aktifkan order select
+                    orderSelect.innerHTML = `
                         <option value="ASC" ${urlParams.get('order') === 'ASC' ? 'selected' : ''}>Tersedikit</option>
                         <option value="DESC" ${urlParams.get('order') === 'DESC' ? 'selected' : ''}>Terbanyak</option>
                     `;
-                    } else if (filterValue === 'tanggal') {
-                        orderSelect.innerHTML = `
+                } else if (filterValue === 'tanggal') {
+                    orderSelect.disabled = false; // Aktifkan order select
+                    orderSelect.innerHTML = `
                         <option value="ASC" ${urlParams.get('order') === 'ASC' ? 'selected' : ''}>Terlama</option>
                         <option value="DESC" ${urlParams.get('order') === 'DESC' ? 'selected' : ''}>Terbaru</option>
                     `;
-                    }
-                } else {
-                    orderSelect.disabled = true;
-                    orderSelect.innerHTML = `<option value="" selected disabled>Pilih Urutan</option>`;
+                } else if (filterValue === 'album') {
+                    albumSelect.disabled = false; // Aktifkan album select
                 }
-            });
-
-            if (urlParams.get('filter')) {
-                filterSelect.value = urlParams.get('filter');
-                filterSelect.dispatchEvent(new Event('change'));
             }
         });
-    </script>
+
+        // Set initial values based on URL parameters
+        if (urlParams.get('filter')) {
+            filterSelect.value = urlParams.get('filter');
+            filterSelect.dispatchEvent(new Event('change'));
+        }
+    });
+</script>
 
 </body>
 

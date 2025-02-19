@@ -33,19 +33,14 @@ $albumid = isset($_GET['albumid']) ? mysqli_real_escape_string($koneksi, $_GET['
 $per_page = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page > 1) ? ($page * $per_page) - $per_page : 0;
-
-if ($albumid) {
-    $query = "SELECT * FROM foto 
-              INNER JOIN user ON foto.userid=user.userid 
-              INNER JOIN album ON foto.albumid=album.albumid 
-              WHERE foto.albumid='$albumid' AND foto.userid='$userid'";
-} else {
-    $query = "SELECT * FROM foto 
-              INNER JOIN user ON foto.userid=user.userid 
-              INNER JOIN album ON foto.albumid=album.albumid 
-              WHERE foto.userid='$userid'";
+$query = "SELECT foto.*, user.username, album.namaalbum 
+          FROM foto 
+          INNER JOIN user ON foto.userid = user.userid 
+          INNER JOIN album ON foto.albumid = album.albumid 
+          WHERE foto.userid='$userid'";
+if ($filter == 'album' && $albumid) {
+    $query .= " AND foto.albumid = '$albumid'";
 }
-
 if ($filter == 'like') {
     $query .= " ORDER BY (SELECT COUNT(*) FROM likefoto WHERE likefoto.fotoid = foto.fotoid) $order";
 } elseif ($filter == 'komen') {
@@ -342,7 +337,7 @@ $photos_result = mysqli_query($koneksi, $query);
         </div>
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <form method="GET" action="profile.php">
                     <div class="row">
                         <div class="mb-2 col-md-4">
@@ -351,6 +346,23 @@ $photos_result = mysqli_query($koneksi, $query);
                                 <option value="like" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'like') ? 'selected' : ''; ?>>Berdasarkan Like</option>
                                 <option value="komen" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'komen') ? 'selected' : ''; ?>>Berdasarkan Komentar</option>
                                 <option value="tanggal" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'tanggal') ? 'selected' : ''; ?>>Berdasarkan Tanggal Unggah</option>
+                                <option value="album" <?php echo (isset($_GET['filter']) && $_GET['filter'] == 'album') ? 'selected' : ''; ?>>Berdasarkan Album</option>
+                            </select>
+                        </div>
+                        <div class="mb-2 col-md-4">
+                            <select name="albumid" class="form-select text-center" id="albumSelect">
+                                <option value="" selected disabled>Pilih Album</option>
+                                <?php
+                                $albums_query = "SELECT album.albumid, album.namaalbum, user.username 
+                         FROM album 
+                         JOIN user ON album.userid = user.userid WHERE album.userid=$userid";
+                                $albums_result = mysqli_query($koneksi, $albums_query);
+                                while ($album = mysqli_fetch_assoc($albums_result)) :
+                                ?>
+                                    <option value="<?php echo $album['albumid']; ?>" <?php if (isset($_GET['albumid']) && $_GET['albumid'] == $album['albumid']) echo 'selected'; ?>>
+                                        <?php echo $album['namaalbum'] . ' (' . $album['username'] . ')'; ?>
+                                    </option>
+                                <?php endwhile; ?>
                             </select>
                         </div>
                         <div class="mb-2 col-md-4">
@@ -358,7 +370,7 @@ $photos_result = mysqli_query($koneksi, $query);
                                 <option value="" selected disabled>Pilih Urutan</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-12">
                             <button type="submit" class="btn hitam form-control">Filter</button>
                         </div>
                     </div>
@@ -373,22 +385,20 @@ $photos_result = mysqli_query($koneksi, $query);
 
             $userid = isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
 
-            $albumid = isset($_GET['albumid']) ? mysqli_real_escape_string($koneksi, $_GET['albumid']) : null;
+            $albumid = isset($_GET['albumid']) ? $_GET['albumid'] : null;
 
-            if ($albumid) {
-                $query = "SELECT * FROM foto 
-                         INNER JOIN user ON foto.userid=user.userid 
-                         INNER JOIN album ON foto.albumid=album.albumid 
-                         WHERE foto.albumid='$albumid' AND foto.userid='$userid'";
-            } else {
-                $query = "SELECT * FROM foto 
-                         INNER JOIN user ON foto.userid=user.userid 
-                         INNER JOIN album ON foto.albumid=album.albumid 
-                         WHERE foto.userid='$userid'";
+            $query = "SELECT foto.*, user.username, album.namaalbum 
+          FROM foto 
+          INNER JOIN user ON foto.userid = user.userid 
+          INNER JOIN album ON foto.albumid = album.albumid 
+          WHERE foto.userid='$userid'";
+
+            if ($filter == 'album' && $albumid) {
+                $query .= " AND foto.albumid = '$albumid'";
             }
 
             if ($filter == 'like') {
-                $query .= " ORDER BY (SELECT COUNT(*) FROM likefoto WHERE likefoto.fotoid = foto.fotoid) $order";
+                $query .= " ORDER BY (SELECT COUNT(*) FROM likefoto WHERE likefoto.fotoid = foto.fotoid) $order ";
             } elseif ($filter == 'komen') {
                 $query .= " ORDER BY (SELECT COUNT(*) FROM komentarfoto WHERE komentarfoto.fotoid = foto.fotoid) $order";
             } elseif ($filter == 'tanggal') {
@@ -475,7 +485,7 @@ $photos_result = mysqli_query($koneksi, $query);
                                                     <?php while ($row = mysqli_fetch_array($komentar)) { ?>
                                                         <div class="comment-item">
                                                             <p class="comment-author">
-                                                            <i class="fa fa-user-circle-o"></i> <strong><?php echo $row['username']; ?></strong>
+                                                                <i class="fa fa-user-circle-o"></i> <strong><?php echo $row['username']; ?></strong>
                                                             </p>
                                                             <div class="comment-content">
                                                                 <p class="comment-text text-secondary" style="font-size: 0.9em;">
@@ -521,7 +531,7 @@ $photos_result = mysqli_query($koneksi, $query);
                 </div>
             <?php } ?>
         </div>
-        <nav aria-label="Page navigation">
+        <nav aria-label="Page navigation" style="margin-top: 25px;">
             <ul class="pagination justify-content-center">
                 <?php if ($page > 1) { ?>
                     <li class="page-item">
@@ -545,7 +555,7 @@ $photos_result = mysqli_query($koneksi, $query);
             </ul>
         </nav>
     </div>
-<!-- 
+    <!-- 
     <footer class="py-3 mt-3 shadow-lg d-flex justify-content-center fixed-bottom">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer> -->
@@ -553,40 +563,51 @@ $photos_result = mysqli_query($koneksi, $query);
 
     <script src="../assets/js/bootstrap.min.js"></script>
     <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const filterSelect = document.getElementById('filterSelect');
-                const orderSelect = document.getElementById('orderSelect');
-                const urlParams = new URLSearchParams(window.location.search);
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterSelect = document.getElementById('filterSelect');
+            const orderSelect = document.getElementById('orderSelect');
+            const albumSelect = document.getElementById('albumSelect');
+            const urlParams = new URLSearchParams(window.location.search);
 
-                filterSelect.addEventListener('change', function() {
-                    const filterValue = filterSelect.value;
-                    orderSelect.innerHTML = '';
+            // Pastikan albumSelect dan orderSelect dinonaktifkan secara default
+            albumSelect.disabled = true;
+            orderSelect.disabled = true;
 
-                    if (filterValue) {
-                        orderSelect.disabled = false;
-                        if (filterValue === 'like' || filterValue === 'komen') {
-                            orderSelect.innerHTML = `
+            filterSelect.addEventListener('change', function() {
+                const filterValue = filterSelect.value;
+
+                // Reset dropdowns
+                orderSelect.innerHTML = '';
+                albumSelect.disabled = true; // Nonaktifkan album select secara default
+                orderSelect.disabled = true; // Nonaktifkan order select secara default
+
+                if (filterValue) {
+                    if (filterValue === 'like' || filterValue === 'komen') {
+                        orderSelect.disabled = false; // Aktifkan order select
+                        orderSelect.innerHTML = `
                         <option value="ASC" ${urlParams.get('order') === 'ASC' ? 'selected' : ''}>Tersedikit</option>
                         <option value="DESC" ${urlParams.get('order') === 'DESC' ? 'selected' : ''}>Terbanyak</option>
                     `;
-                        } else if (filterValue === 'tanggal') {
-                            orderSelect.innerHTML = `
+                    } else if (filterValue === 'tanggal') {
+                        orderSelect.disabled = false; // Aktifkan order select
+                        orderSelect.innerHTML = `
                         <option value="ASC" ${urlParams.get('order') === 'ASC' ? 'selected' : ''}>Terlama</option>
                         <option value="DESC" ${urlParams.get('order') === 'DESC' ? 'selected' : ''}>Terbaru</option>
                     `;
-                        }
-                    } else {
-                        orderSelect.disabled = true;
-                        orderSelect.innerHTML = `<option value="" selected disabled>Pilih Urutan</option>`;
+                    } else if (filterValue === 'album') {
+                        albumSelect.disabled = false; // Aktifkan album select
                     }
-                });
-
-                if (urlParams.get('filter')) {
-                    filterSelect.value = urlParams.get('filter');
-                    filterSelect.dispatchEvent(new Event('change'));
                 }
             });
-        </script>
+
+            // Set initial values based on URL parameters
+            if (urlParams.get('filter')) {
+                filterSelect.value = urlParams.get('filter');
+                filterSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+
 
 </body>
 
