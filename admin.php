@@ -17,7 +17,7 @@ $result = mysqli_query($koneksi, $query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Verifikasi Pengguna</title>
+    <title>Fikri Galeri | Admin - Verifikasi Pengguna</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <style>
         .navbar-nav .nav-link:hover {
