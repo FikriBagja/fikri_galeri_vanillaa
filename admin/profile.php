@@ -236,11 +236,13 @@ $photos_result = mysqli_query($koneksi, $query);
             background-color: #000;
             color: #fff;
         }
+
         .yes {
             background-color: #000;
             color: #fff;
         }
-        .yes:hover{
+
+        .yes:hover {
             border-color: #000;
             color: #000;
         }
@@ -355,12 +357,15 @@ $photos_result = mysqli_query($koneksi, $query);
     <div class="container mt-3">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center w-100" style="margin-bottom: 15px;">
             <h2 class="text-secondary">
-                <a href="?filter=random" class="link-offset-2 link-underline link-underline-opacity-0 text-secondary">Semua Foto <?php echo $_SESSION['username'] ?></a>
+                Dashboard
             </h2>
             <button type="button" class="btn yes" data-bs-toggle="modal" data-bs-target="#viewProfileModal">
                 Lihat Profile
             </button>
         </div>
+        <h5 class="text-secondary" style="margin-top: -20px;">
+            Semua Foto <?php echo $_SESSION['username']?>
+        </h5>
 
         <div class="row">
             <div class="col-md-12">

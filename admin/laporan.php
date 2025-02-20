@@ -13,12 +13,10 @@ $albumid = isset($_GET['albumid']) ? $_GET['albumid'] : null;
 $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'album.namaalbum';
 $sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC';
 
-// Pagination
 $limit = 5;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page > 1) ? ($page * $limit) - $limit : 0;
 
-// Function untuk mencetak laporan
 function generateReport($koneksi, $userid, $albumid = null, $sort_by = 'album.namaalbum', $sort_order = 'ASC', $start = 0, $limit = 5)
 {
     $whereClause = "WHERE album.userid = '$userid'";
@@ -57,7 +55,6 @@ function generateReport($koneksi, $userid, $albumid = null, $sort_by = 'album.na
 
 $reportData = generateReport($koneksi, $userid, $albumid, $sort_by, $sort_order, $start, $limit);
 
-// Untuk menghitung total data (untuk pagination)
 $totalDataQuery = "SELECT COUNT(*) AS total FROM album WHERE userid = '$userid'";
 $totalDataResult = mysqli_query($koneksi, $totalDataQuery);
 $totalData = mysqli_fetch_assoc($totalDataResult)['total'];
@@ -78,8 +75,6 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     <title>Fikri Galeri | Laporan</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" href="https://cdnjs.com/libraries/Chart.js">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
@@ -225,7 +220,6 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                         </select>
                     </div>
 
-                    <!-- Filter Berdasarkan -->
                     <div class="col-md-3">
                         <select name="sort_by" class="form-control">
                             <option value="album.namaalbum" <?php if ($sort_by == 'album.namaalbum') echo 'selected'; ?>>Nama Album</option>
@@ -267,7 +261,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                         <?php foreach ($reportData as $key => $row) : ?>
                             <tr>
                                 <td><?php echo $key + 1 + $start; ?></td>
-                               
+
                                 <td><?php echo $row['namaalbum']; ?></td>
                                 <td><?php echo $row['jumlah_foto']; ?></td>
                                 <td><?php echo $row['jumlah_like']; ?></td>
@@ -315,13 +309,12 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         </nav>
     </div>
 
+    <script src="../assets/node_modules/chart.js/dist/chart.umd.js"></script>
     <script>
         function printReport() {
-            // Menampilkan header untuk username dan tanggal cetak
             var header = document.getElementById('print-header');
             header.style.display = 'block';
 
-            // Mengambil tanggal saat ini
             var currentDate = new Date();
             var dateString = currentDate.toLocaleDateString('id-ID', {
                 weekday: 'long',
@@ -330,15 +323,11 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                 day: 'numeric'
             });
 
-            // Menampilkan tanggal cetak di header
             document.getElementById('print-date').innerText = '' + dateString;
 
-            // Menambahkan event listener untuk menyembunyikan header setelah cetak
             window.onafterprint = function() {
                 header.style.display = 'none';
             };
-
-            // Mencetak laporan
             window.print();
         }
         const chartLabels = <?php echo json_encode(array_column($reportData, 'namaalbum')); ?>;
@@ -346,32 +335,42 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         const jumlahLike = <?php echo json_encode(array_column($reportData, 'jumlah_like')); ?>;
         const jumlahKomen = <?php echo json_encode(array_column($reportData, 'jumlah_komen')); ?>;
 
+        const chartType = chartLabels.length === 1 ? 'bar' : 'line';
+
         const ctx = document.getElementById('laporanChart').getContext('2d');
         new Chart(ctx, {
-            type: 'line',
+            type: chartType,
             data: {
                 labels: chartLabels,
-                datasets: [
-                    {
+                datasets: [{
                         label: 'Jumlah Foto',
                         data: jumlahFoto,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.3)',
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                        pointRadius: 5,
+                        fill: true
                     },
                     {
                         label: 'Jumlah Like',
                         data: jumlahLike,
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.3)',
                         borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointRadius: 5,
+                        fill: true
                     },
                     {
                         label: 'Jumlah Komentar',
                         data: jumlahKomen,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.3)',
                         borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        pointRadius: 5,
+                        fill: true
                     }
                 ]
             },
@@ -380,15 +379,46 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                 plugins: {
                     legend: {
                         position: 'top',
+                        labels: {
+                            font: {
+                                size: 13
+                            }
+                        }
                     },
                     title: {
                         display: true,
-                        text: 'Statistik Album'
+                        text: 'Statistik Album',
+                        font: {
+                            size: 20
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        tension: 0.4
                     }
                 },
                 scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.3)'
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
                     }
                 }
             }
