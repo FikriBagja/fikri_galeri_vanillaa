@@ -153,6 +153,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         .yes {
             background-color: #000;
             color: #fff;
+            width: 190px;
         }
 
         .yes:hover {
@@ -239,25 +240,17 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
                     <div class="col-md-3">
                         <button type="submit" class="btn btn-primary">Filter</button>
-                        <a href="cetak_laporan.php?albumid=<?php echo $albumid; ?>&sort_by=<?php echo $sort_by; ?>&sort_order=<?php echo $sort_order; ?>" class="btn yes">Cetak Laporan</a>
+                        <a href="cetak_laporan.php?albumid=<?php echo $albumid; ?>&sort_by=<?php echo $sort_by; ?>&sort_order=<?php echo $sort_order; ?>" class="btn yes">Download Laporan</a>
                     </div>
                 </div>
             </form>
         </div>
 
-        <!-- Laporan Header - Username dan Tanggal -->
-        <div id="print-header" class="header-print no-print" style="display: none; margin-top:50px;">
-            <span>Username: <?php echo $_SESSION['username']; ?></span>
-            <span id="print-date"> </span>
-        </div>
-
-        <!-- Tabel Laporan -->
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Foto Album</th>
                         <th>Nama Album</th>
                         <th>Jumlah Foto</th>
                         <th>Jumlah Like</th>
@@ -269,13 +262,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                         <?php foreach ($reportData as $key => $row) : ?>
                             <tr>
                                 <td><?php echo $key + 1 + $start; ?></td>
-                                <td>
-                                    <?php if ($row['lokasifile']) : ?>
-                                        <img src="../assets/img/<?php echo $row['lokasifile']; ?>" alt="Foto Album" class="img-thumbnail">
-                                    <?php else : ?>
-                                        Tidak Ada Foto
-                                    <?php endif; ?>
-                                </td>
+                               
                                 <td><?php echo $row['namaalbum']; ?></td>
                                 <td><?php echo $row['jumlah_foto']; ?></td>
                                 <td><?php echo $row['jumlah_like']; ?></td>

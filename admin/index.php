@@ -404,6 +404,8 @@ $pages = ceil($total / $per_page);
                                                         <?php
                                                         $replies = mysqli_query($koneksi, "SELECT * FROM komentarfoto INNER JOIN user ON komentarfoto.userid = user.userid WHERE reply_komen = '" . $row['komentarid'] . "'");
                                                         while ($reply = mysqli_fetch_array($replies)) {
+                                                            $date = new DateTime($reply['tanggalkomentar'], new DateTimeZone('Asia/Jakarta'));
+                                                            $timeAgo = $date->getTimestamp();
                                                         ?>
                                                             <div class="comment-item" style="margin-left: 30px;">
                                                                 <p class="comment-author">

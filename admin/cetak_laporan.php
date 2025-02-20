@@ -1,22 +1,29 @@
 <?php
 session_start();
+require_once '../vendor/autoload.php'; // Sesuaikan path jika perlu
 include '../config/koneksi.php';
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+date_default_timezone_set('Asia/Jakarta');
+// Pastikan user sudah login
 if ($_SESSION['status'] != 'login') {
     echo "<script>
-    alert('Anda harus login terlebih dahulu!');
-    location.href = '../index.php';
-    </script>";
+            alert('Anda harus login terlebih dahulu!');
+            location.href = '../index.php';
+          </script>";
+    exit;
 }
 
 $userid = $_SESSION['userid'];
 
-// Ambil data laporan (sesuaikan dengan logika filter yang ada di laporan.php)
+// Ambil parameter dari URL (misalnya, dari form filter)
 $albumid = isset($_GET['albumid']) ? $_GET['albumid'] : null;
 $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'album.namaalbum';
 $sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC';
 
-// Function untuk mencetak laporan (ambil dari laporan.php atau sesuaikan)
+// Fungsi untuk menghasilkan data laporan (gunakan fungsi yang sama dari laporan.php)
 function generateReport($koneksi, $userid, $albumid = null, $sort_by = 'album.namaalbum', $sort_order = 'ASC')
 {
     $whereClause = "WHERE album.userid = '$userid'";
@@ -26,10 +33,10 @@ function generateReport($koneksi, $userid, $albumid = null, $sort_by = 'album.na
 
     $orderBy = "ORDER BY $sort_by $sort_order";
 
-    $query = "SELECT album.albumid, album.namaalbum, 
+    $query = "SELECT album.albumid, album.namaalbum,
                      (SELECT lokasifile FROM foto WHERE albumid = album.albumid ORDER BY tanggalunggah DESC LIMIT 1) as lokasifile,
-                     COUNT(DISTINCT foto.fotoid) as jumlah_foto, 
-                     COUNT(DISTINCT likefoto.likeid) as jumlah_like,    
+                     COUNT(DISTINCT foto.fotoid) as jumlah_foto,
+                     COUNT(DISTINCT likefoto.likeid) as jumlah_like,
                      COUNT(DISTINCT komentarfoto.komentarid) as jumlah_komen
               FROM album
               LEFT JOIN foto ON album.albumid = foto.albumid
@@ -53,126 +60,139 @@ function generateReport($koneksi, $userid, $albumid = null, $sort_by = 'album.na
 
 $reportData = generateReport($koneksi, $userid, $albumid, $sort_by, $sort_order);
 
+// Mulai buffering output
+ob_start();
 ?>
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Fikri Galeri | Cetak Laporan</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <title>Laporan Galeri</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            font-size: 12pt;
+            margin: 20px;
         }
 
-        .table {
+        .header {
+            text-align: center;
+        }
+
+        .header img {
+            max-width: 100px;
+            /* Ukuran logo */
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24pt;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 18pt;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
 
-        .table th,
-        .table td {
-            border: 1px solid #ddd;
+        th,
+        td {
+            border: 1px solid black;
             padding: 8px;
-            text-align: center;
+            text-align: left;
         }
 
-        .table th {
-            background-color: #000;
-            color: #000;
-            text-align: center;
+        th {
+            background-color: #f2f2f2;
         }
 
-        .img-thumbnail {
-            max-width: 100px;
-            max-height: 100px;
-            object-fit: cover;
-        }
-
-        /* Gaya khusus cetak */
-        @media print {
-            body {
-                font-size: 12pt;
-            }
-
-            .header {
-                text-align: center;
-                margin-bottom: 20px;
-            }
-
-            .user-info {
-                margin-bottom: 10px;
-            }
-
-            .table {
-                width: 100%;
-            }
-
-            .table th,
-            .table td {
-                border: 1px solid #000 !important;
-                padding: 5px;
-            }
-
-            .img-thumbnail {
-                max-width: 100px;
-                max-height: 100px;
-            }
+        img {
+            max-width: 80px;
+            max-height: 80px;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Fikri Galeri</h1>
-        </div>
-        <br><br>
-        <div class="user-info">
-            Dicetak oleh: <?php echo $_SESSION['username']; ?><br>
-            Tanggal: <?php echo date('d-m-Y H:i:s'); ?>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Foto Album</th>
-                    <th>Nama Album</th>
-                    <th style="width: 50px;">Jumlah Foto</th>
-                    <th style="width: 50px;">Jumlah Like</th>
-                    <th style="width: 50px;">Jumlah Komentar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (count($reportData) > 0) : ?>
-                    <?php foreach ($reportData as $key => $row) : ?>
-                        <tr>
-                            <td><?php echo $key + 1; ?></td>
-                            <td>
-                                <?php if ($row['lokasifile']) : ?>
-                                    <img src="../assets/img/<?php echo $row['lokasifile']; ?>" alt="Foto Album" class="img-thumbnail">
-                                <?php else : ?>
-                                    Tidak Ada Foto
-                                <?php endif; ?>
-                            </td>
-                            <td><?php echo $row['namaalbum']; ?></td>
-                            <td><?php echo $row['jumlah_foto']; ?></td>
-                            <td><?php echo $row['jumlah_like']; ?></td>
-                            <td><?php echo $row['jumlah_komen']; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else : ?>
-                    <tr>
-                        <td colspan="6">Tidak ada data.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+    <div class="header">
+        <h1>Fikri Galeri</h1>
+        <p>jl Lorem ipsum dolor sit amet no 123</p>
+        <p>082123456789 | fikrigaleri@gmail.com</p>
     </div>
-    <script>
-        window.print();
-    </script>
+    <hr style="border: 1px solid black;">
+    <br>
+    <div class="info">
+        <h2>Laporan Album</h2>
+        <p style="text-align: left; margin-top:20px;">Dicetak oleh: <?php echo $_SESSION['username']; ?></p>
+        <p style="text-align: right; margin-top:-27px">Tanggal/Waktu: <?php echo date('d-m-Y / H:i:s'); ?></p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama Album</th>
+                <th>Jumlah Foto</th>
+                <th>Jumlah Like</th>
+                <th>Jumlah Komentar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (count($reportData) > 0) : ?>
+                <?php foreach ($reportData as $key => $row) : ?>
+                    <tr>
+                        <td><?php echo $key + 1; ?></td>
+                        <td><?php echo $row['namaalbum']; ?></td>
+                        <td><?php echo $row['jumlah_foto']; ?></td>
+                        <td><?php echo $row['jumlah_like']; ?></td>
+                        <td><?php echo $row['jumlah_komen']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <tr>
+                    <td colspan="5">Tidak ada data.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+<br>
+    <p>Terima kasih atas perhatian Anda.</p>
+
 </body>
 
 </html>
+<?php
+// Simpan output HTML ke dalam variabel
+$html = ob_get_clean();
+
+// Konfigurasi Dompdf
+$options = new Options();
+$options->set('defaultFont', 'Arial');
+
+// Instantiate Dompdf dengan konfigurasi
+$dompdf = new Dompdf($options);
+
+// Load HTML
+$dompdf->loadHtml($html);
+
+// (Optional) Atur ukuran dan orientasi kertas
+$dompdf->setPaper('A4', 'portrait');
+
+// Render HTML sebagai PDF
+$dompdf->render();
+
+// Kirim PDF ke browser untuk diunduh
+$filename = 'laporan_galeri_' . date('YmdHis') . '.pdf';
+$dompdf->stream($filename, ['Attachment' => 1]);
+
+exit(0);
+?>
