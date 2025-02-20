@@ -11,18 +11,34 @@ if ($_SESSION['status'] != 'login') {
 
 $userid = $_SESSION['userid'];
 
-$query = "SELECT notifications.content, notifications.created_at, notifications.is_read, user.username AS action_user, foto.lokasifile AS foto_path
+$per_page = 5;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start_from = ($page - 1) * $per_page;
+
+// Query utama untuk mengambil notifikasi dengan pagination
+$query = "SELECT notifications.id, notifications.content, notifications.created_at, notifications.is_read, user.username AS action_user, foto.lokasifile AS foto_path
     FROM notifications
     JOIN user ON notifications.action_userid = user.userid
     LEFT JOIN foto ON foto.fotoid = notifications.fotoid
     WHERE notifications.userid = '$userid'
-    ORDER BY notifications.created_at DESC";
+    ORDER BY notifications.created_at DESC
+    LIMIT $start_from, $per_page";
 
 $result = mysqli_query($koneksi, $query);
+
+// Query untuk menghitung total notifikasi (untuk pagination)
+$total_query = "SELECT COUNT(*) AS total FROM notifications WHERE userid = '$userid'";
+$total_result = mysqli_query($koneksi, $total_query);
+$total_row = mysqli_fetch_assoc($total_result);
+$total = $total_row['total'];
+$pages = ceil($total / $per_page);
 
 $hitung_notif = "SELECT COUNT(*) AS belum_dibaca FROM notifications WHERE userid = '$userid' AND is_read = 0";
 $hasil = mysqli_query($koneksi, $hitung_notif);
 $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
+
+$no = $start_from + 1;
+
 ?>
 <html>
 
@@ -121,7 +137,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         }
 
         @media (max-width: 576px) {
-            .tooltip-text{
+            .tooltip-text {
                 margin-left: -180px !important;
             }
         }
@@ -181,8 +197,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                         <a href="foto.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'foto.php') ? 'active' : ''; ?>">Foto</a>
                     </li>
                 </ul>
-                <a href="profile.php" class="nav-link position-relative" 
-                    style="margin-right: 30px; margin-bottom: 15px; margin-top:15px;">
+                <a href="profile.php" class="nav-link position-relative" style="margin-right: 30px; margin-bottom: 15px; margin-top:15px;">
                     <i class="fa fa-user-o" style="font-weight: bold; font-size: 1.3em;"></i>
                 </a>
                 <a href="notifikasi.php" class="nav-link position-relative">
@@ -197,8 +212,6 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             </div>
         </div>
     </nav>
-
-
     <div class="container mt-3" style=" margin-bottom:20px;">
         <div class="header-container">
             <h2 class="text-secondary" style="margin-bottom: 20px;">Notifikasi</h2>
@@ -251,7 +264,10 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         <?php endif; ?>
 
         <?php if (mysqli_num_rows($result) > 0) : ?>
-            <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+            <?php while ($row = mysqli_fetch_assoc($result)) :
+                $date = new DateTime($row['created_at'], new DateTimeZone('Asia/Jakarta'));
+                $timeAgo = $date->getTimestamp();
+            ?>
                 <?php
                 $isUnread = ($row['is_read'] == 0);
                 $cardClass = $isUnread ? 'notification-card notification-unread' : 'notification-card';
@@ -263,7 +279,9 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                             <?php echo htmlspecialchars($row['content']); ?>
                         </p>
                         <div class="notification-time" style="margin-top: -10px;">
-                            <?php echo date('d M Y H:i', strtotime($row['created_at'])); ?>
+                            <?php
+                            echo '<small class="time-ago" data-time="' . $timeAgo . '">' . $date->format('Y-m-d H:i:s') . '</small>';
+                            ?>
                         </div>
                     </div>
                     <img src="../assets/img/<?php echo $row['foto_path'] ?>" alt="Foto yang di-like atau dikomentari" class="notification-img">
@@ -278,7 +296,21 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     <!-- <footer class="py-3 mt-5 footer d-flex justify-content-center border-top">
         <p>&copy;Fikri Bagja Ramadhan</p>
     </footer> -->
-
+    <nav aria-label="Page navigation" class="no-print">
+        <ul class="pagination justify-content-center">
+            <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
+                <a class="page-link" href="notifikasi.php?page=<?php echo ($page - 1); ?>">Kembali</a>
+            </li>
+            <?php for ($i = 1; $i <= $pages; $i++) : ?>
+                <li class="page-item <?php if ($page == $i) echo 'active'; ?>">
+                    <a class="page-link" href="notifikasi.php?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                </li>
+            <?php endfor; ?>
+            <li class="page-item <?php if ($page >= $pages) echo 'disabled'; ?>">
+                <a class="page-link" href="notifikasi.php?page=<?php echo ($page + 1); ?>">Lanjut</a>
+            </li>
+        </ul>
+    </nav>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             setTimeout(function() {
@@ -289,6 +321,38 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                 });
             }, 5000);
         });
+
+        function updateTimeAgo() {
+            let elements = document.querySelectorAll('.time-ago');
+            let now = Math.floor(Date.now() / 1000);
+
+            elements.forEach(el => {
+                let commentTime = parseInt(el.getAttribute('data-time'));
+                console.log(`Debug JS: Komentar pada ${commentTime}, sekarang ${now}, selisih ${now - commentTime} detik`);
+
+                let timeDiff = now - commentTime;
+                el.textContent = getTimeAgoText(timeDiff);
+            });
+        }
+
+        function getTimeAgoText(seconds) {
+            if (seconds < 60) return `${seconds} detik yang lalu`;
+            let minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} menit yang lalu`;
+            let hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} jam yang lalu`;
+            let days = Math.floor(hours / 24);
+            if (days < 7) return `${days} hari yang lalu`;
+            let weeks = Math.floor(days / 7);
+            if (weeks < 4) return `${weeks} minggu yang lalu`;
+            let months = Math.floor(days / 30);
+            if (months < 12) return `${months} bulan yang lalu`;
+            let years = Math.floor(days / 365);
+            return `${years} tahun yang lalu`;
+        }
+
+        setInterval(updateTimeAgo, 1000);
+        updateTimeAgo();
     </script>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
 

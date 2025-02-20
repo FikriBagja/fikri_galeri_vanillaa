@@ -8,15 +8,26 @@ if ($_SESSION['status'] != 'login') {
     location.href = '../index.php';
     </script>";
 }
+
 $albumid = isset($_GET['albumid']) ? $_GET['albumid'] : null;
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'album.namaalbum';
+$sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC';
+
+// Pagination
+$limit = 5;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start = ($page > 1) ? ($page * $limit) - $limit : 0;
 
 // Function untuk mencetak laporan
-function generateReport($koneksi, $userid, $albumid = null)
+function generateReport($koneksi, $userid, $albumid = null, $sort_by = 'album.namaalbum', $sort_order = 'ASC', $start = 0, $limit = 5)
 {
     $whereClause = "WHERE album.userid = '$userid'";
     if ($albumid) {
         $whereClause .= " AND album.albumid = '$albumid'";
     }
+
+    $orderBy = "ORDER BY $sort_by $sort_order";
+    $limitClause = "LIMIT $start, $limit";
 
     $query = "SELECT album.albumid, album.namaalbum, 
                      (SELECT lokasifile FROM foto WHERE albumid = album.albumid ORDER BY tanggalunggah DESC LIMIT 1) as lokasifile,
@@ -29,7 +40,8 @@ function generateReport($koneksi, $userid, $albumid = null)
               LEFT JOIN komentarfoto ON foto.fotoid = komentarfoto.fotoid
               $whereClause
               GROUP BY album.albumid, album.namaalbum
-              ORDER BY album.namaalbum";
+              $orderBy
+              $limitClause";
 
     $result = mysqli_query($koneksi, $query);
     $data = [];
@@ -43,11 +55,18 @@ function generateReport($koneksi, $userid, $albumid = null)
     return $data;
 }
 
-$reportData = generateReport($koneksi, $userid, $albumid);
+$reportData = generateReport($koneksi, $userid, $albumid, $sort_by, $sort_order, $start, $limit);
+
+// Untuk menghitung total data (untuk pagination)
+$totalDataQuery = "SELECT COUNT(*) AS total FROM album WHERE userid = '$userid'";
+$totalDataResult = mysqli_query($koneksi, $totalDataQuery);
+$totalData = mysqli_fetch_assoc($totalDataResult)['total'];
+$totalPages = ceil($totalData / $limit);
+
+
 $hitung_notif = "SELECT COUNT(*) AS belum_dibaca FROM notifications WHERE userid = '$userid' AND is_read = 0";
 $hasil = mysqli_query($koneksi, $hitung_notif);
 $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
-
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +75,7 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Galeri Foto</title>
+    <title>Fikri Galeri | Laporan</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.css">
 
@@ -180,12 +199,12 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
     <div class="container">
         <h1 class="mt-3 text-secondary">Laporan</h1>
-        
+
         <!-- Filter Album -->
         <div class="filter-form no-print">
             <form method="GET" action="laporan.php">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <select name="albumid" class="form-control">
                             <option value="">Semua Album</option>
                             <?php
@@ -199,9 +218,28 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                             <?php endwhile; ?>
                         </select>
                     </div>
-                    <div class="col-md-4">
+
+                    <!-- Filter Berdasarkan -->
+                    <div class="col-md-3">
+                        <select name="sort_by" class="form-control">
+                            <option value="album.namaalbum" <?php if ($sort_by == 'album.namaalbum') echo 'selected'; ?>>Nama Album</option>
+                            <option value="jumlah_like" <?php if ($sort_by == 'jumlah_like') echo 'selected'; ?>>Jumlah Like</option>
+                            <option value="jumlah_komen" <?php if ($sort_by == 'jumlah_komen') echo 'selected'; ?>>Jumlah Komentar</option>
+                            <option value="jumlah_foto" <?php if ($sort_by == 'jumlah_foto') echo 'selected'; ?>>Jumlah Foto</option>
+                        </select>
+                    </div>
+
+                    <!-- Urutan -->
+                    <div class="col-md-3">
+                        <select name="sort_order" class="form-control">
+                            <option value="ASC" <?php if ($sort_order == 'ASC') echo 'selected'; ?>>Asc/Tersedikit</option>
+                            <option value="DESC" <?php if ($sort_order == 'DESC') echo 'selected'; ?>>Desc/Terbanyak</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
                         <button type="submit" class="btn btn-primary">Filter</button>
-                        <button type="button" class="btn yes" onclick="printReport()">Cetak Laporan</button>
+                        <a href="cetak_laporan.php?albumid=<?php echo $albumid; ?>&sort_by=<?php echo $sort_by; ?>&sort_order=<?php echo $sort_order; ?>" class="btn yes">Cetak Laporan</a>
                     </div>
                 </div>
             </form>
@@ -210,46 +248,79 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
         <!-- Laporan Header - Username dan Tanggal -->
         <div id="print-header" class="header-print no-print" style="display: none; margin-top:50px;">
             <span>Username: <?php echo $_SESSION['username']; ?></span>
-            <span id="print-date">Tanggal Cetak: </span>
+            <span id="print-date"> </span>
         </div>
 
         <!-- Tabel Laporan -->
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Foto Album</th>
-                    <th>Nama Album</th>
-                    <th>Jumlah Foto</th>
-                    <th>Jumlah Like</th>
-                    <th>Jumlah Komentar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (count($reportData) > 0) : ?>
-                    <?php foreach ($reportData as $key => $row) : ?>
-                        <tr>
-                            <td><?php echo $key + 1; ?></td>
-                            <td>
-                                <?php if ($row['lokasifile']) : ?>
-                                    <img src="../assets/img/<?php echo $row['lokasifile']; ?>" alt="Foto Album" class="img-thumbnail">
-                                <?php else : ?>
-                                    Tidak Ada Foto
-                                <?php endif; ?>
-                            </td>
-                            <td><?php echo $row['namaalbum']; ?></td>
-                            <td><?php echo $row['jumlah_foto']; ?></td>
-                            <td><?php echo $row['jumlah_like']; ?></td>
-                            <td><?php echo $row['jumlah_komen']; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else : ?>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td colspan="6">Tidak ada data.</td>
+                        <th>No</th>
+                        <th>Foto Album</th>
+                        <th>Nama Album</th>
+                        <th>Jumlah Foto</th>
+                        <th>Jumlah Like</th>
+                        <th>Jumlah Komentar</th>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (count($reportData) > 0) : ?>
+                        <?php foreach ($reportData as $key => $row) : ?>
+                            <tr>
+                                <td><?php echo $key + 1 + $start; ?></td>
+                                <td>
+                                    <?php if ($row['lokasifile']) : ?>
+                                        <img src="../assets/img/<?php echo $row['lokasifile']; ?>" alt="Foto Album" class="img-thumbnail">
+                                    <?php else : ?>
+                                        Tidak Ada Foto
+                                    <?php endif; ?>
+                                </td>
+                                <td><?php echo $row['namaalbum']; ?></td>
+                                <td><?php echo $row['jumlah_foto']; ?></td>
+                                <td><?php echo $row['jumlah_like']; ?></td>
+                                <td><?php echo $row['jumlah_komen']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <tr>
+                            <td colspan="6">Tidak ada data.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="no-print">
+            <ul class="pagination justify-content-center">
+                <li class="page-item <?php if ($page <= 1) {
+                                            echo 'disabled';
+                                        } ?>">
+                    <a class="page-link" href="<?php if ($page <= 1) {
+                                                    echo '#';
+                                                } else {
+                                                    echo "?page=" . ($page - 1);
+                                                } ?>">Kembali</a>
+                </li>
+                <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                    <li class="page-item <?php if ($page == $i) {
+                                                echo 'active';
+                                            } ?>">
+                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+                <li class="page-item <?php if ($page >= $totalPages) {
+                                            echo 'disabled';
+                                        } ?>">
+                    <a class="page-link" href="<?php if ($page >= $totalPages) {
+                                                    echo '#';
+                                                } else {
+                                                    echo "?page=" . ($page + 1);
+                                                } ?>">Lanjut</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 
     <script>
@@ -257,15 +328,18 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             // Menampilkan header untuk username dan tanggal cetak
             var header = document.getElementById('print-header');
             header.style.display = 'block';
-            
+
             // Mengambil tanggal saat ini
             var currentDate = new Date();
             var dateString = currentDate.toLocaleDateString('id-ID', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             });
 
             // Menampilkan tanggal cetak di header
-            document.getElementById('print-date').innerText = 'Tanggal Cetak: ' + dateString;
+            document.getElementById('print-date').innerText = '' + dateString;
 
             // Menambahkan event listener untuk menyembunyikan header setelah cetak
             window.onafterprint = function() {

@@ -340,7 +340,7 @@ $photos_result = mysqli_query($koneksi, $query);
         </div>
 
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-6">
                 <form method="GET" action="profile.php">
                     <div class="row">
                         <div class="mb-2 col-md-4">
@@ -485,7 +485,10 @@ $photos_result = mysqli_query($koneksi, $query);
                                                         <strong><?php echo mysqli_num_rows($komentar); ?> Komentar</strong>
                                                     </h5>
 
-                                                    <?php while ($row = mysqli_fetch_array($komentar)) { ?>
+                                                    <?php while ($row = mysqli_fetch_array($komentar)) {
+                                                        $date = new DateTime($row['tanggalkomentar'], new DateTimeZone('Asia/Jakarta'));
+                                                        $timeAgo = $date->getTimestamp();
+                                                    ?>
                                                         <div class="comment-item">
                                                             <p class="comment-author">
                                                                 <i class="fa fa-user-circle-o"></i> <strong><?php echo $row['username']; ?></strong>
@@ -498,7 +501,9 @@ $photos_result = mysqli_query($koneksi, $query);
                                                         </div>
                                                         <div class="comment-footer">
                                                             <p class="comment-date">
-                                                                <small><?php echo date('d M Y H:i:s', strtotime($row['tanggalkomentar'])); ?></small>
+                                                                <?php
+                                                                echo '<small class="time-ago" data-time="' . $timeAgo . '">' . $date->format('Y-m-d H:i:s') . '</small>';
+                                                                ?>
                                                             </p>
                                                             <span class="text-secondary" style="font-size: 0.7em" data-bs-toggle="collapse" href="#reply<?php echo $row['komentarid']; ?>" role="button" aria-expanded="false" aria-controls="reply<?php echo $row['komentarid']; ?>">Balas</span>
                                                         </div>
@@ -526,7 +531,9 @@ $photos_result = mysqli_query($koneksi, $query);
                                                                         <?php echo $reply['isikomentar']; ?>
                                                                     </p>
                                                                     <p class="comment-date" style="margin-top: -17px;">
-                                                                        <small><?php echo date('d M Y H:i:s', strtotime($reply['tanggalkomentar'])); ?></small>
+                                                                        <?php
+                                                                        echo '<small class="time-ago" data-time="' . $timeAgo . '">' . $date->format('Y-m-d H:i:s') . '</small>';
+                                                                        ?>
                                                                     </p>
                                                                 </div>
                                                             </div>
@@ -548,25 +555,23 @@ $photos_result = mysqli_query($koneksi, $query);
         </div>
         <nav aria-label="Page navigation" style="margin-top: 25px;">
             <ul class="pagination justify-content-center">
-                <?php if ($page > 1) { ?>
-                    <li class="page-item">
-                        <a class="page-link" href="profile.php?page=<?php echo ($page - 1); ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                <?php } ?>
+                <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
+                    <a class="page-link" href="profile.php?page=<?php echo ($page - 1); ?>&filter=<?php echo $filter; ?><?php if (isset($_GET['albumid'])) echo '&albumid=' . $_GET['albumid']; ?>&order=<?php echo $order; ?>" aria-label="Previous">
+                        <span aria-hidden="true">Kembali</span>
+                    </a>
+                </li>
+
                 <?php for ($i = 1; $i <= $pages; $i++) { ?>
                     <li class="page-item <?php if ($page == $i) echo 'active'; ?>">
-                        <a class="page-link" href="profile.php?page=<?php echo $i; ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>"><?php echo $i; ?></a>
+                        <a class="page-link" href="profile.php?page=<?php echo $i; ?>&filter=<?php echo $filter; ?><?php if (isset($_GET['albumid'])) echo '&albumid=' . $_GET['albumid']; ?>&order=<?php echo $order; ?>"><?php echo $i; ?></a>
                     </li>
                 <?php } ?>
-                <?php if ($page < $pages) { ?>
-                    <li class="page-item">
-                        <a class="page-link" href="profile.php?page=<?php echo ($page + 1); ?>&filter=<?php echo $filter; ?>&order=<?php echo $order; ?>" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                <?php } ?>
+
+                <li class="page-item <?php if ($page >= $pages) echo 'disabled'; ?>">
+                    <a class="page-link" href="profile.php?page=<?php echo ($page + 1); ?>&filter=<?php echo $filter; ?><?php if (isset($_GET['albumid'])) echo '&albumid=' . $_GET['albumid']; ?>&order=<?php echo $order; ?>" aria-label="Next">
+                        <span aria-hidden="true">Lanjut</span>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>
@@ -621,6 +626,38 @@ $photos_result = mysqli_query($koneksi, $query);
                 filterSelect.dispatchEvent(new Event('change'));
             }
         });
+
+        function updateTimeAgo() {
+            let elements = document.querySelectorAll('.time-ago');
+            let now = Math.floor(Date.now() / 1000);
+
+            elements.forEach(el => {
+                let commentTime = parseInt(el.getAttribute('data-time'));
+                console.log(`Debug JS: Komentar pada ${commentTime}, sekarang ${now}, selisih ${now - commentTime} detik`);
+
+                let timeDiff = now - commentTime;
+                el.textContent = getTimeAgoText(timeDiff);
+            });
+        }
+
+        function getTimeAgoText(seconds) {
+            if (seconds < 60) return `${seconds} detik yang lalu`;
+            let minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} menit yang lalu`;
+            let hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} jam yang lalu`;
+            let days = Math.floor(hours / 24);
+            if (days < 7) return `${days} hari yang lalu`;
+            let weeks = Math.floor(days / 7);
+            if (weeks < 4) return `${weeks} minggu yang lalu`;
+            let months = Math.floor(days / 30);
+            if (months < 12) return `${months} bulan yang lalu`;
+            let years = Math.floor(days / 365);
+            return `${years} tahun yang lalu`;
+        }
+
+        setInterval(updateTimeAgo, 1000);
+        updateTimeAgo();
     </script>
 
 

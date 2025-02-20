@@ -277,20 +277,44 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
                     </table>
 
                     <?php
-                    $result = mysqli_query($koneksi, "SELECT COUNT(albumid) AS total FROM album WHERE userid='$userid'");
-                    $row = mysqli_fetch_array($result);
-                    $total_records = $row['total'];
-                    $total_pages = ceil($total_records / $per_page);
-
-                    echo '<nav aria-label="Page navigation example"><ul class="pagination justify-content-center">';
-                    for ($i = 1; $i <= $total_pages; $i++) {
-                        echo '<li class="page-item"><a class="page-link" href="album.php?page=' . $i . '">' . $i . '</a></li>';
-                    }
-                    echo '</ul></nav>';
+                    $result = ("SELECT COUNT(albumid) AS total FROM album WHERE userid='$userid'");
+                    $total_result = mysqli_query($koneksi, $result);
+                    $total_row = mysqli_fetch_assoc($total_result);
+                    $total = $total_row['total'];
+                    $pages = ceil($total / $per_page);
                     ?>
                 </div>
             </div>
         </div>
+        <nav aria-label="Page navigation" class="no-print">
+            <ul class="pagination justify-content-center">
+                <li class="page-item <?php if ($page <= 1) {
+                                            echo 'disabled';
+                                        } ?>">
+                    <a class="page-link" href="<?php if ($page <= 1) {
+                                                    echo '#';
+                                                } else {
+                                                    echo "?page=" . ($page - 1);
+                                                } ?>">Kembali</a>
+                </li>
+                <?php for ($i = 1; $i <= $pages; $i++) : ?>
+                    <li class="page-item <?php if ($page == $i) {
+                                                echo 'active';
+                                            } ?>">
+                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+                <li class="page-item <?php if ($page >= $pages) {
+                                            echo 'disabled';
+                                        } ?>">
+                    <a class="page-link" href="<?php if ($page >= $pages) {
+                                                    echo '#';
+                                                } else {
+                                                    echo "?page=" . ($page + 1);
+                                                } ?>">Lanjut</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 
 
