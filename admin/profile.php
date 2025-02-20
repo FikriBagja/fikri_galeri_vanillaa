@@ -69,7 +69,7 @@ $photos_result = mysqli_query($koneksi, $query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fikri Galeri | Profile</title>
+    <title>Fikri Galeri | Dashboard</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.css">
 
@@ -236,6 +236,14 @@ $photos_result = mysqli_query($koneksi, $query);
             background-color: #000;
             color: #fff;
         }
+        .yes {
+            background-color: #000;
+            color: #fff;
+        }
+        .yes:hover{
+            border-color: #000;
+            color: #000;
+        }
     </style>
 </head>
 
@@ -274,18 +282,29 @@ $photos_result = mysqli_query($koneksi, $query);
             </div>
         </div>
     </nav>
-    <div class="container p-5 d-flex justify-content-center" style="margin-bottom: 100px; margin-top: 70px;">
-        <div class="card shadow-lg border-0 rounded-4" style="width: 350px;">
-            <div class="d-flex justify-content-center mt-4">
-                <img src="../assets/avatar/avatar.png" height="120" width="120" class="rounded-circle border border-4 border-primary" alt="Profile Picture" title="<?php echo $user['username'] ?>" />
-            </div>
-            <div class="card-body text-center">
-                <h3 class="card-title fw-bold"><?php echo $user['username'] ?></h3>
-                <p class="card-text text-muted"><?php echo $user['namalengkap'] ?></p>
 
-                <div class="mt-4">
-                    <button type="button" class="btn btn-edit w-100 mb-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-                    <a href="../config/aksi_logout.php" class="btn btn-reject w-100">Logout</a>
+    <div class="modal fade" id="viewProfileModal" tabindex="-1" aria-labelledby="viewProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewProfileModalLabel">Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card shadow-lg border-0 rounded-4 text-center" style="width: 100%;">
+                        <div class="d-flex justify-content-center mt-4">
+                            <img src="../assets/avatar/avatar.png" height="120" width="120" class="rounded-circle border border-4 border-primary" alt="Profile Picture" title="<?php echo $user['username'] ?>" />
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title fw-bold"><?php echo $user['username'] ?></h3>
+                            <p class="card-text text-muted"><?php echo $user['namalengkap'] ?></p>
+
+                            <div class="mt-4">
+                                <button type="button" class="btn btn-edit w-100 mb-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+                                <a href="../config/aksi_logout.php" class="btn btn-reject w-100">Logout</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -332,15 +351,19 @@ $photos_result = mysqli_query($koneksi, $query);
         </div>
     </div>
 
+
     <div class="container mt-3">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center w-100" style="margin-bottom: 15px;">
             <h2 class="text-secondary">
                 <a href="?filter=random" class="link-offset-2 link-underline link-underline-opacity-0 text-secondary">Semua Foto <?php echo $_SESSION['username'] ?></a>
             </h2>
+            <button type="button" class="btn yes" data-bs-toggle="modal" data-bs-target="#viewProfileModal">
+                Lihat Profile
+            </button>
         </div>
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <form method="GET" action="profile.php">
                     <div class="row">
                         <div class="mb-2 col-md-4">
@@ -374,7 +397,7 @@ $photos_result = mysqli_query($koneksi, $query);
                             </select>
                         </div>
                         <div class="col-md-12">
-                            <button type="submit" class="btn hitam form-control">Filter</button>
+                            <button type="submit" class="btn yes form-control">Filter</button>
                         </div>
                     </div>
                 </form>

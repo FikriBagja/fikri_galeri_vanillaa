@@ -78,6 +78,8 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
     <title>Fikri Galeri | Laporan</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.com/libraries/Chart.js">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
@@ -200,8 +202,11 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
 
     <div class="container">
         <h1 class="mt-3 text-secondary">Laporan</h1>
-
-        <!-- Filter Album -->
+        <div class="chart-container">
+            <canvas id="laporanChart"></canvas>
+        </div>
+        <br>
+        <br>
         <div class="filter-form no-print">
             <form method="GET" action="laporan.php">
                 <div class="row">
@@ -336,6 +341,58 @@ $belum_dibaca = mysqli_fetch_assoc($hasil)['belum_dibaca'];
             // Mencetak laporan
             window.print();
         }
+        const chartLabels = <?php echo json_encode(array_column($reportData, 'namaalbum')); ?>;
+        const jumlahFoto = <?php echo json_encode(array_column($reportData, 'jumlah_foto')); ?>;
+        const jumlahLike = <?php echo json_encode(array_column($reportData, 'jumlah_like')); ?>;
+        const jumlahKomen = <?php echo json_encode(array_column($reportData, 'jumlah_komen')); ?>;
+
+        const ctx = document.getElementById('laporanChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        label: 'Jumlah Foto',
+                        data: jumlahFoto,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Jumlah Like',
+                        data: jumlahLike,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Jumlah Komentar',
+                        data: jumlahKomen,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Statistik Album'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     </script>
 
     <script src="../assets/js/bootstrap.min.js"></script>

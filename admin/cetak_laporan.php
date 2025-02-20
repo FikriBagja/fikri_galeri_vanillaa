@@ -133,7 +133,6 @@ ob_start();
     <div class="info">
         <h2>Laporan Album</h2>
         <p style="text-align: left; margin-top:20px;">Dicetak oleh: <?php echo $_SESSION['username']; ?></p>
-        <p style="text-align: right; margin-top:-27px">Tanggal/Waktu: <?php echo date('d-m-Y / H:i:s'); ?></p>
     </div>
 
     <table>
@@ -166,7 +165,13 @@ ob_start();
     </table>
 <br>
     <p>Terima kasih atas perhatian Anda.</p>
+    <p style="text-align: right; margin-top:-25px;"> Cimahi, 
+    <?php echo date('d-m-Y'); ?>
+    </p>
+    <p style="text-align: right; margin-top:65px; margin-right:10px;">.........................</p>
+    <div>
 
+    </div>
 </body>
 
 </html>

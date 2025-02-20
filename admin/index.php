@@ -166,6 +166,16 @@ $pages = ceil($total / $per_page);
             background-color: #000;
             color: #fff;
         }
+
+        .yes{
+            background-color: #000;
+            color: #fff;
+        }
+
+        .yes:hover{
+            border-color: #000;
+            color: #000;
+        }
     </style>
 </head>
 
@@ -210,7 +220,7 @@ $pages = ceil($total / $per_page);
             <a href="?filter=random" class="link-offset-2 link-underline link-underline-opacity-0 text-secondary">Semua Foto</a>
         </h2>
         <div class="row" style="margin-top: 20px">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <form method="GET" action="index.php">
                     <div class="row">
                         <div class="mb-2 col-md-4">
@@ -248,7 +258,7 @@ $pages = ceil($total / $per_page);
                         </div>
 
                         <div class="col-md-12">
-                            <button type="submit" class="btn hitam form-control">Filter</button>
+                            <button type="submit" class="btn yes form-control">Filter</button>
                         </div>
                     </div>
                 </form>
